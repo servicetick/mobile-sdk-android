@@ -1,0 +1,71 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        encoding "UTF-8"
+    }
+}
+
+dependencies {
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api "android.arch.work:work-runtime-ktx:$work_version"
+
+    api 'androidx.lifecycle:lifecycle-livedata:2.0.0'
+    api 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    api 'androidx.core:core-ktx:1.0.1'
+
+    api "com.squareup.retrofit2:retrofit:$retrofit_version"
+    api "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    api 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    api 'com.github.stupacki:MultiFunctions:1.2.0'
+
+    implementation 'com.gitlab.lilhermit:kotlin-java-ktx:1.0.1'
+
+    // Remote Logger
+    implementation 'com.gitlab.lilhermit:remote-logger-client-android:1.0.0-alpha7'
+
+    // Add Dagger dependencies
+    api "com.google.dagger:dagger:$dagger_version"
+    api "com.google.dagger:dagger-android-support:$dagger_version"
+
+    // Dagger pre-processing
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
+
+    // Room
+    api "android.arch.persistence.room:runtime:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
+
+    // Testing
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    androidTestImplementation "androidx.test.ext:junit:1.0.0"
+
+    // Can be removed later once Android Gradle Plugin update is released
+    kapt 'com.android.tools.build.jetifier:jetifier-core:1.0.0-beta02'
+    annotationProcessor 'com.android.tools.build.jetifier:jetifier-core:1.0.0-beta02'
+}
+repositories {
+    mavenCentral()
+}
