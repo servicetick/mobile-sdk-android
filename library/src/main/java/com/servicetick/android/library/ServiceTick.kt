@@ -50,16 +50,19 @@ class ServiceTick(context: Context) : LifecycleOwner {
                 override fun onChanged(workStatus: WorkInfo?) {
                     if (workStatus?.state == WorkInfo.State.SUCCEEDED) {
                         if (survey.id != 0L) {
-                            serviceTickDao.getSurveyAsLiveData(survey.id)?.observe(this@ServiceTick, Observer { fullSurvey ->
-                                surveyMap[fullSurvey.id] = fullSurvey
+                            serviceTickDao.getSurveyAsLiveData(survey.id).observe(this@ServiceTick, Observer {
 
-                                if (previousState != fullSurvey.state) {
-                                    liveData.postValue(fullSurvey.state)
-                                    previousState = fullSurvey.state
+                                it?.let { fullSurvey ->
+                                    surveyMap[fullSurvey.id] = fullSurvey
+
+                                    if (previousState != fullSurvey.state) {
+                                        liveData.postValue(fullSurvey.state)
+                                        previousState = fullSurvey.state
+                                    }
+
+                                    // Only enqueues one as ExistingPeriodicWorkPolicy.KEEP
+                                    SurveyInitWorker.enqueueRefreshAll()
                                 }
-
-                                // Only enqueues one as ExistingPeriodicWorkPolicy.KEEP
-                                SurveyInitWorker.enqueueRefreshAll()
                             })
                         }
                     }

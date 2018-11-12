@@ -65,7 +65,7 @@ internal interface ServiceTickDao {
 
     @Transaction
     @Query("SELECT * FROM surveys WHERE surveys.id=:id")
-    fun getSurveyAsLiveData(id: Long): LiveData<Survey>?
+    fun getSurveyAsLiveData(id: Long): LiveData<Survey?>
 
     @Transaction
     @Query("SELECT * FROM surveys")
