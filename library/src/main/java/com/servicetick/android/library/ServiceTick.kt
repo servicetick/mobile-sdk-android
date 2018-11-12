@@ -2,8 +2,7 @@ package com.servicetick.android.library
 
 import android.content.Context
 import androidx.lifecycle.*
-import androidx.work.State
-import androidx.work.WorkStatus
+import androidx.work.WorkInfo
 import com.servicetick.android.library.dagger.DaggerLibraryComponent
 import com.servicetick.android.library.db.ServiceTickDao
 import com.servicetick.android.library.entities.Survey
@@ -44,12 +43,12 @@ class ServiceTick(context: Context) : LifecycleOwner {
 
         if (!surveyMap.contains(survey.id)) {
 
-            SurveyInitWorker.enqueue(survey, this, object : Observer<WorkStatus> {
+            SurveyInitWorker.enqueue(survey, this, object : Observer<WorkInfo> {
 
                 private var previousState: Survey.State? = null
 
-                override fun onChanged(workStatus: WorkStatus?) {
-                    if (workStatus?.state == State.SUCCEEDED) {
+                override fun onChanged(workStatus: WorkInfo?) {
+                    if (workStatus?.state == WorkInfo.State.SUCCEEDED) {
                         if (survey.id != 0L) {
                             serviceTickDao.getSurveyAsLiveData(survey.id)?.observe(this@ServiceTick, Observer { fullSurvey ->
                                 surveyMap[fullSurvey.id] = fullSurvey

@@ -40,10 +40,10 @@ dependencies {
     api 'com.squareup.okhttp3:logging-interceptor:3.11.0'
     api 'com.github.stupacki:MultiFunctions:1.2.0'
 
-    implementation 'com.gitlab.lilhermit:kotlin-java-ktx:1.0.1'
+    api 'com.gitlab.lilhermit:kotlin-java-ktx:1.0.1'
 
     // Remote Logger
-    implementation 'com.gitlab.lilhermit:remote-logger-client-android:1.0.0-alpha7'
+    api 'com.gitlab.lilhermit:remote-logger-client-android:1.0.0-alpha8'
 
     // Add Dagger dependencies
     api "com.google.dagger:dagger:$dagger_version"
