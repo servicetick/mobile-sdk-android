@@ -1,7 +1,9 @@
 package com.servicetick.android.library.providers
 
+import android.content.ComponentName
 import android.content.ContentProvider
 import android.content.ContentValues
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import androidx.work.Configuration
@@ -15,7 +17,19 @@ class ServiceTickInitialiserProvider : ContentProvider() {
         Log.init("ServiceTickMobileSdk")
 
         context?.run {
-            WorkManager.initialize(this, Configuration.Builder().build())
+
+            try {
+                // Disable WorkManagerInitializer then initialize manually
+                val workManagerInitializer = ComponentName(this, "androidx.work.impl.WorkManagerInitializer")
+                packageManager.setComponentEnabledSetting(
+                        workManagerInitializer,
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        0
+                )
+                WorkManager.initialize(this, Configuration.Builder().build())
+            } catch (exception: Exception) {
+            }
+
             ServiceTick.internalInit(this)
         }
         return true
