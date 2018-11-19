@@ -7,10 +7,12 @@ import com.servicetick.android.library.dagger.DaggerLibraryComponent
 import com.servicetick.android.library.db.ServiceTickDao
 import com.servicetick.android.library.entities.Survey
 import com.servicetick.android.library.workers.SurveyInitWorker
+import java.lang.ref.WeakReference
 import javax.inject.Inject
 
 class ServiceTick(context: Context) : LifecycleOwner {
 
+    internal var weakReference = WeakReference<Context>(context.applicationContext)
     private var lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
     private val surveyMap: MutableMap<Long, Survey> = mutableMapOf()
     private val config: MutableMap<String, Any> = mutableMapOf(

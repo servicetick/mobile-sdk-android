@@ -3,6 +3,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <application>
+        <activity android:name=".activity.SurveyActivity" android:theme="@style/AppTheme.NoActionBar"/>
         <provider
             android:authorities="${applicationId}.servicetick-init"
             android:exported="false"

@@ -1,8 +1,14 @@
 package com.servicetick.android.library.entities
 
+import android.content.Intent
+import androidx.fragment.app.Fragment
 import androidx.room.Ignore
 import androidx.room.Relation
+import com.servicetick.android.library.ServiceTick
+import com.servicetick.android.library.activity.SurveyActivity
 import com.servicetick.android.library.entities.db.BaseSurveyQuestion
+import com.servicetick.android.library.fragment.SurveyFragment
+import com.servicetick.android.library.triggers.ManualTrigger
 import com.servicetick.android.library.triggers.Trigger
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -46,8 +52,31 @@ class Survey internal constructor(val id: Long) {
     @PublishedApi
     internal var questions: MutableList<SurveyQuestion> = mutableListOf()
 
+    @Ignore
+    internal var triggers: MutableList<Trigger> = mutableListOf()
+
     fun addTrigger(trigger: Trigger) {
     }
+
+    private fun startTrigger(trigger: Trigger): Fragment? {
+
+        return when (trigger.presentation) {
+            Trigger.Presentation.FRAGMENT -> SurveyFragment.create(id)
+            else -> {
+                ServiceTick.get().weakReference.get()?.let { context ->
+
+                    Intent(context, SurveyActivity::class.java).run {
+                        putExtra(SurveyActivity.EXTRA_SURVEY_ID, id)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        context.startActivity(this)
+                    }
+                }
+                null
+            }
+        }
+    }
+
+    fun start(presentation: Trigger.Presentation = Trigger.Presentation.START_ACTIVITY): Fragment? = startTrigger(ManualTrigger(presentation))
 
     override fun toString(): String {
         return "Survey(id=$id, title=$title, type=$type, state=$state, lastUpdated=${lastUpdated?.time.toString()}, refreshInterval=$refreshInterval)\n   pageTransitions=$pageTransitions\n   questionOptionActions=$questionOptionActions\n   questions=$questions\n"
