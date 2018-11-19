@@ -110,7 +110,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
         private const val KEY_ID = "id"
         private const val KEY_REFRESH_INTERVAL = "refresh_interval"
 
-        internal fun enqueue(survey: Survey, lifecycleOwner: LifecycleOwner? = null, observer: Observer<WorkStatus>? = null) {
+        internal fun enqueue(survey: Survey, lifecycleOwner: LifecycleOwner? = null, observer: Observer<WorkInfo>? = null) {
             val constraints = Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build()
@@ -129,7 +129,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
 
                 lifecycleOwner?.let { owner ->
                     observer?.let { obsv ->
-                        getStatusByIdLiveData(surveyInitWorker.id).observe(owner, obsv)
+                        getWorkInfoByIdLiveData(surveyInitWorker.id).observe(owner, obsv)
                     }
 
                 }
@@ -137,7 +137,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
             }
         }
 
-        internal fun enqueueRefreshAll(observer: Observer<List<WorkStatus>>? = null, lifecycleOwner: LifecycleOwner? = null) {
+        internal fun enqueueRefreshAll(observer: Observer<List<WorkInfo>>? = null, lifecycleOwner: LifecycleOwner? = null) {
 
             val surveyInitWorker = PeriodicWorkRequestBuilder<SurveyInitWorker>(24, TimeUnit.HOURS)
                     .setConstraints(Constraints.Builder()
@@ -151,7 +151,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
 
                 lifecycleOwner?.let { owner ->
                     observer?.let { obsv ->
-                        getStatusesForUniqueWorkLiveData("survey_init_all").observe(owner, obsv)
+                        getWorkInfosForUniqueWorkLiveData("survey_init_all").observe(owner, obsv)
                     }
                 }
             }
