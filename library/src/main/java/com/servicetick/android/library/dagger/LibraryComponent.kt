@@ -3,6 +3,7 @@ package com.servicetick.android.library.dagger
 import android.content.Context
 import com.servicetick.android.library.ServiceTick
 import com.servicetick.android.library.fragment.SurveyFragment
+import com.servicetick.android.library.fragment.SurveyPageFragment
 import com.servicetick.android.library.workers.SurveyInitWorker
 import dagger.Component
 import dagger.android.AndroidInjector
@@ -18,4 +19,5 @@ internal interface LibraryComponent : AndroidInjector<Context> {
     fun inject(serviceTick: ServiceTick)
     fun inject(surveyInitWorker: SurveyInitWorker)
     fun inject(surveyFragment: SurveyFragment)
+    fun inject(fragment: SurveyPageFragment)
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="grey1">#eeeeee</color>
+    <color name="grey2">#dddddd</color>
+    <color name="grey3">#cccccc</color>
+    <color name="grey4">#bbbbbb</color>
+    <color name="grey5">#aaaaaa</color>
+    <color name="grey6">#999999</color>
+    <color name="grey7">#888888</color>
+    <color name="grey8">#777777</color>
+    <color name="grey9">#666666</color>
+    <color name="grey10">#555555</color>
+    <color name="grey11">#444444</color>
+    <color name="grey12">#333333</color>
+    <color name="grey13">#222222</color>
+    <color name="grey14">#111111</color>
+</resources>

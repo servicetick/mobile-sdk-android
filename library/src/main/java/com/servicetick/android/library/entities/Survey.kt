@@ -76,6 +76,8 @@ class Survey internal constructor(val id: Long) {
         }
     }
 
+    fun getPageCount() : Int = pageTransitions.size
+
     fun start(presentation: Trigger.Presentation = Trigger.Presentation.START_ACTIVITY): Fragment? = startTrigger(ManualTrigger(presentation))
 
     override fun toString(): String {

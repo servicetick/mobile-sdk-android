@@ -2,10 +2,7 @@ package com.servicetick.android.library.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.servicetick.android.library.entities.Survey
-import com.servicetick.android.library.entities.SurveyPageTransition
-import com.servicetick.android.library.entities.SurveyQuestionOption
-import com.servicetick.android.library.entities.SurveyQuestionOptionAction
+import com.servicetick.android.library.entities.*
 import com.servicetick.android.library.entities.db.BaseSurvey
 import com.servicetick.android.library.entities.db.BaseSurveyQuestion
 
@@ -66,6 +63,10 @@ internal interface ServiceTickDao {
     @Transaction
     @Query("SELECT * FROM surveys WHERE surveys.id=:id")
     fun getSurveyAsLiveData(id: Long): LiveData<Survey?>
+
+    @Transaction
+    @Query("SELECT * FROM survey_questions WHERE survey_questions.pageId=:pageId")
+    fun getQuestionsForPageAsLiveData(pageId: Long): LiveData<List<SurveyQuestion>>
 
     @Transaction
     @Query("SELECT * FROM surveys")
