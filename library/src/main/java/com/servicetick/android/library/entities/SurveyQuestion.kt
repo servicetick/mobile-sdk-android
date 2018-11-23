@@ -2,7 +2,7 @@ package com.servicetick.android.library.entities
 
 import androidx.room.Ignore
 import androidx.room.Relation
-import com.servicetick.android.library.entities.db.QuestionType
+import com.servicetick.android.library.view.questions.QuestionView
 
 internal class SurveyQuestion {
 

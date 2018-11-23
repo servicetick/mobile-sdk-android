@@ -1,6 +1,6 @@
-package com.servicetick.android.library.entities.db
+package com.servicetick.android.library.entities
 
-enum class QuestionType {
+internal enum class QuestionType {
 
     /**
      * Represents checkbox question type
