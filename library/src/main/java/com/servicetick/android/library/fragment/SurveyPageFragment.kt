@@ -4,16 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import androidx.core.view.forEach
+import androidx.core.view.get
 import androidx.lifecycle.Observer
 import com.servicetick.android.library.R
 import com.servicetick.android.library.ServiceTick
 import com.servicetick.android.library.entities.SurveyPageTransition
+import com.servicetick.android.library.view.questions.QuestionView
 import com.servicetick.android.library.viewmodel.SurveysViewModel
 
 class SurveyPageFragment : BaseFragment() {
 
     private var viewModel: SurveysViewModel? = null
     private var pageTransition: SurveyPageTransition? = null
+    private var container: LinearLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,11 +41,30 @@ class SurveyPageFragment : BaseFragment() {
         pageTransition?.let { page ->
             viewModel?.getQuestionsForPage(page.sourcePageId)?.observe(this, Observer { questionList ->
 
+                container = ((view as ScrollView)[0] as LinearLayout)
+
+                container?.let { questionContainer ->
+                    questionList.forEachIndexed { index, question ->
+                        if (question.shouldRender()) {
+                            questionContainer.addView(question.getView(requireContext()))
+                        }
+                    }
+
+                }
             })
         }
     }
 
     fun canAdvance(): Boolean {
+
+        container?.forEach { view ->
+            if (view is QuestionView) {
+                if (!view.isValid()) {
+                    return false
+
+                }
+            }
+        }
         return true
     }
 

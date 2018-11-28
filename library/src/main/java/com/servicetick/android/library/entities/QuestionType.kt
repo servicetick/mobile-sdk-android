@@ -72,6 +72,7 @@ internal enum class QuestionType {
                 8 -> ALERT_OR_RETURN
                 9 -> DROP_DOWN_BOX
                 10 -> SOCIAL_MEDIA
+                11 -> TABLE_QUESTION
                 else -> TABLE_QUESTION
             }
         }

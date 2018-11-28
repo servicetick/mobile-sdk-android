@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.servicetick.android.library.R
 import com.servicetick.android.library.ServiceTick
+import com.servicetick.android.library.activity.SurveyActivity
 import com.servicetick.android.library.entities.Survey
 import com.servicetick.android.library.entities.SurveyPageTransition
 import com.servicetick.android.library.view.ExtendedViewPager
@@ -57,7 +58,14 @@ class SurveyFragment : BaseFragment() {
         view.buttonFinish.setOnClickListener {
             if (getCurrentFragment().canAdvance()) {
                 // Finish the fragment / activity
-//                requireFragmentManager().popBackStack()
+                // TODO potential callback on completion?!
+                if (requireActivity() is SurveyActivity) {
+                    requireActivity().finish()
+                } else {
+                    // TODO this will need to be removed and the user will remove or pop backstack
+                    // depending on their implementation. We will need a callback for this
+                    requireFragmentManager().popBackStack()
+                }
             }
         }
 
@@ -73,7 +81,11 @@ class SurveyFragment : BaseFragment() {
     private fun movePage(forward: Boolean = true) {
 
         if (forward && !getCurrentFragment().canAdvance()) {
-//            displaySnackBarMessage()
+
+            // Scroll to invalid question if out of view
+            // TODO fix swiping dismiss, we need a CoordinatorLayout
+            showSnackBar(R.string.missed_required_questions)
+
             return
         }
 

@@ -4,5 +4,8 @@
     <string name="back">Back</string>
     <string name="next">Next</string>
     <string name="finish">Finish</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="missed_required_questions">You have missed some required questions, please review your answers.</string>
+    <string name="please_select_one">Please select one</string>
 
 </resources>
