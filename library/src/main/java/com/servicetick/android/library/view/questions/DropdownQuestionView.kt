@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter
 import androidx.annotation.Nullable
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.content.getSystemService
-import androidx.core.view.isVisible
 import com.servicetick.android.library.R
 
 internal class DropdownQuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -52,7 +51,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
     }
 
     override fun isValid(): Boolean {
-        val valid = !isVisible || question?.minRequiredAnswers == 0 || (question?.minRequiredAnswers != 0 && spinner?.selectedItemId ?: 1 > 0)
+        val valid = super.isValid() || question?.minRequiredAnswers == 0 || (question?.minRequiredAnswers != 0 && spinner?.selectedItemId ?: 1 > 0)
 
         if (!valid) {
             // TODO Error handling

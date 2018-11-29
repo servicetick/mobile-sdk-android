@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.servicetick.android.library.R
 import com.servicetick.android.library.entities.SurveyQuestion
 import com.servicetick.android.library.ktx.toDp
@@ -43,5 +44,5 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Constra
         }
     }
 
-    open fun isValid() = false
+    open fun isValid() = !isVisible
 }

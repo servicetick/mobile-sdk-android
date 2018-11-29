@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.EditText
 import androidx.annotation.Nullable
 import androidx.core.content.getSystemService
-import androidx.core.view.isVisible
 import com.google.android.material.textfield.TextInputLayout
 import com.servicetick.android.library.R
 import com.servicetick.android.library.ktx.toDp
@@ -60,7 +59,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
 
     override fun isValid(): Boolean {
 
-        val valid = !isVisible || question?.minRequiredAnswers == 0 || (question?.minRequiredAnswers != 0 && getEditText()?.text?.isEmpty() == false)
+        val valid = super.isValid() || question?.minRequiredAnswers == 0 || (question?.minRequiredAnswers != 0 && getEditText()?.text?.isEmpty() == false)
 
         if (!valid) {
             // TODO Error handling
