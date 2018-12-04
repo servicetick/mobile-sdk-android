@@ -1,13 +1,14 @@
 package com.servicetick.android.library.entities
 
 import android.content.Context
+import android.os.Parcel
 import androidx.room.Ignore
 import androidx.room.Relation
 import com.servicetick.android.library.view.questions.DropdownQuestionView
 import com.servicetick.android.library.view.questions.QuestionView
 import com.servicetick.android.library.view.questions.TextBoxQuestionView
 
-internal class SurveyQuestion {
+internal class SurveyQuestion() : KParcelable {
 
     var id: Long? = null
 
@@ -51,6 +52,55 @@ internal class SurveyQuestion {
     var options: List<SurveyQuestionOption>? = emptyList()
 
     var textBoxType: String = ""
+
+    constructor(parcel: Parcel) : this() {
+        id = parcel.readLong()
+        surveyId = parcel.readLong()
+        originalQuestionId = parcel.readLong()
+        question = parcel.readString() ?: ""
+        questionTypeId = parcel.readInt()
+        initiallyVisible = parcel.readBoolean()
+        deleted = parcel.readBoolean()
+        questionOrder = parcel.readInt()
+        pageId = parcel.readLong()
+        minRequiredAnswers = parcel.readInt()
+        maxRequiredAnswers = parcel.readInt()
+        marginId = parcel.readString()
+        margin = parcel.readString()
+        horizontal = parcel.readBoolean()
+        isTableQuestion = parcel.readBoolean()
+        surveyTableQuestionDescription = parcel.readString()
+        completed = parcel.readBoolean()
+        options = parcel.createTypedArrayList(SurveyQuestionOption.CREATOR)
+        textBoxType = parcel.readString() ?: "SingleLine"
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
+        writeNullable(id) { writeLong(it) }
+        writeNullable(surveyId) { writeLong(it) }
+        writeLong(originalQuestionId)
+        writeString(question)
+        writeInt(questionTypeId)
+        writeBoolean(initiallyVisible)
+        writeBoolean(deleted)
+        writeInt(questionOrder)
+        writeNullable(pageId) { writeLong(it) }
+        writeNullable(minRequiredAnswers) { writeInt(it) }
+        writeNullable(maxRequiredAnswers) { writeInt(it) }
+        writeString(marginId)
+        writeString(margin)
+        writeBoolean(horizontal)
+        writeBoolean(isTableQuestion)
+        writeString(surveyTableQuestionDescription)
+        writeBoolean(completed)
+        writeTypedArray(options?.toTypedArray(), flags)
+        writeString(textBoxType)
+    }
+
+    companion object {
+        @JvmField
+        val CREATOR = parcelableCreator(::SurveyQuestion)
+    }
 
     fun shouldRender(): Boolean = !deleted && shouldRenderType()
 

@@ -13,7 +13,6 @@ import com.servicetick.android.library.R
 import com.servicetick.android.library.ServiceTick
 import com.servicetick.android.library.activity.SurveyActivity
 import com.servicetick.android.library.entities.Survey
-import com.servicetick.android.library.entities.SurveyPageTransition
 import com.servicetick.android.library.view.ExtendedViewPager
 import com.servicetick.android.library.viewmodel.SurveysViewModel
 import kotlinx.android.synthetic.main.fragment_survey.*
@@ -111,7 +110,7 @@ class SurveyFragment : BaseFragment() {
                 viewModel?.getSurvey(id)?.observe(this, Observer {
                     it?.run {
                         survey = this
-                        viewPager?.adapter = SurveyPageAdapter(fragmentManager, this.pageTransitions)
+                        viewPager?.adapter = SurveyPageAdapter(fragmentManager)
                         updateView()
                     }
                 })
@@ -125,19 +124,22 @@ class SurveyFragment : BaseFragment() {
     private fun getCurrentFragment(): SurveyPageFragment = getAdapter().getItem(viewPager?.currentItem
             ?: 0) as SurveyPageFragment
 
-    internal inner class SurveyPageAdapter constructor(private var fm: FragmentManager?, private var pages: List<SurveyPageTransition>) : FragmentPagerAdapter(fm) {
+    internal inner class SurveyPageAdapter constructor(private var fm: FragmentManager?) : FragmentPagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment {
             val fragment = fm?.findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + position)
             return if (fragment !== null) {
                 fragment
             } else {
-                SurveyPageFragment.create(survey.pageTransitions[position])
+                val questions  = survey.questions.filter {
+                    it.pageId ==survey.pageTransitions[position].sourcePageId
+                }
+                SurveyPageFragment.create(survey.pageTransitions[position], questions)
             }
         }
 
         override fun getCount(): Int {
-            return pages.size
+            return survey.pageTransitions.size
         }
     }
 
