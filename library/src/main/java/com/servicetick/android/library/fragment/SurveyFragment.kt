@@ -133,6 +133,8 @@ class SurveyFragment : BaseFragment() {
             } else {
                 val questions  = survey.questions.filter {
                     it.pageId ==survey.pageTransitions[position].sourcePageId
+                }.sortedBy {
+                    it.questionOrder
                 }
                 SurveyPageFragment.create(survey.pageTransitions[position], questions)
             }
