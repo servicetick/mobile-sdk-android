@@ -122,7 +122,8 @@ internal class SurveyQuestion() : KParcelable {
             QuestionType.DROP_DOWN_BOX -> DropdownQuestionView(context)
             else -> QuestionView(context)
         }.apply {
-            this.question = this@SurveyQuestion
+            question = this@SurveyQuestion
+            id = this@SurveyQuestion.id?.toInt() ?: -1
         }
     }
 }
