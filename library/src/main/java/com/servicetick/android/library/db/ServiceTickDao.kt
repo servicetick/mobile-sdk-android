@@ -19,6 +19,9 @@ internal interface ServiceTickDao {
             questionOptionAction.surveyId = survey.id
         }
 
+        insertSurvey(survey)
+        insertSurveyPageTransitions(survey.pageTransitions)
+
         survey.questions.forEach { question ->
 
             question.surveyId = survey.id
@@ -26,13 +29,11 @@ internal interface ServiceTickDao {
                 option.questionId = question.id
 
             }
+            insertSurveyQuestion(question)
             insertSurveyQuestionOptions(question.options)
-        }
-        insertSurvey(survey)
 
-        insertSurveyPageTransitions(survey.pageTransitions)
+        }
         insertSurveyQuestionOptionActions(survey.questionOptionActions)
-        insertSurveyQuestions(survey.questions)
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -46,6 +47,9 @@ internal interface ServiceTickDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSurveyQuestions(entities: List<BaseSurveyQuestion>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertSurveyQuestion(question: BaseSurveyQuestion)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSurveyQuestionOptions(entities: List<SurveyQuestionOption>)
@@ -71,4 +75,7 @@ internal interface ServiceTickDao {
     @Transaction
     @Query("SELECT * FROM surveys")
     fun getSurveys(): List<Survey>
+
+    @Query("DELETE from survey_questions where surveyId=:surveyId AND id NOT IN(:notInQuestionIds)")
+    fun purgeQuestions(surveyId: Long, notInQuestionIds: Array<Long>)
 }

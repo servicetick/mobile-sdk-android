@@ -2,11 +2,13 @@ package com.servicetick.android.library.entities
 
 import android.os.Parcel
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Ignore
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.servicetick.android.library.entities.db.BaseSurvey
 
-@Entity(tableName = "survey_page_transitions", primaryKeys = ["surveyId", "sourcePageId"])
+@Entity(tableName = "survey_page_transitions", primaryKeys = ["surveyId", "sourcePageId"], foreignKeys = [ForeignKey(entity = BaseSurvey::class, parentColumns = ["id"], childColumns = ["surveyId"], onDelete = ForeignKey.CASCADE)])
 internal class SurveyPageTransition() : KParcelable {
 
     var surveyId: Long = 0

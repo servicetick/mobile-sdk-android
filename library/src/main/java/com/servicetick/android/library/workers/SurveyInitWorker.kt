@@ -104,6 +104,11 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
         }
 
         serviceTickDao.insert(newSurvey)
+
+        //Purge changed or removed questions
+        serviceTickDao.purgeQuestions(newSurvey.id, newSurvey.questions.mapNotNull {
+            it.id
+        }.toTypedArray())
     }
 
     companion object {
