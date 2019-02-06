@@ -10,7 +10,6 @@ import androidx.annotation.Nullable
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.core.content.getSystemService
 import androidx.core.view.forEach
-import androidx.core.view.isVisible
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayout
 import com.servicetick.android.library.R
@@ -73,7 +72,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
         val min = question?.minRequiredAnswers ?: 0
         val max = question?.maxRequiredAnswers ?: 0
 
-        val valid = !isVisible || question?.minRequiredAnswers == 0 || getChecked().size in min..max
+        val valid = super.isValid() || question?.minRequiredAnswers == 0 || getChecked().size in min..max
 
 
         if (!valid) {
