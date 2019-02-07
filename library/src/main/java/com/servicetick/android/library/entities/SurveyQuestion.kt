@@ -120,7 +120,9 @@ internal class SurveyQuestion() : KParcelable {
             QuestionType.SINGLE_TEXT_BOX -> TextBoxQuestionView(context)
             QuestionType.INFORMATION_BOX -> InformationBoxQuestionView(context)
             QuestionType.SINGLE_SELECT_RADIO -> RadioQuestionView(context)
+            QuestionType.JUMP_TO_PAGE -> JumpToPageQuestionView(context)
             QuestionType.DROP_DOWN_BOX -> DropdownQuestionView(context)
+            QuestionType.TABLE_QUESTION -> TableQuestionView(context)
             else -> QuestionView(context)
         }.apply {
             question = this@SurveyQuestion
