@@ -59,7 +59,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
     private fun getChecked(): Array<String> {
         val checked = arrayListOf<String>()
         checkboxContainer?.forEach { view ->
-            if (view.isSelected && view is AppCompatCheckBox) {
+            if (view is AppCompatCheckBox && view.isChecked) {
                 checked.add(view.text.toString())
             }
         }
@@ -72,8 +72,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
         val min = question?.minRequiredAnswers ?: 0
         val max = question?.maxRequiredAnswers ?: 0
 
-        val valid = super.isValid() || question?.minRequiredAnswers == 0 || getChecked().size in min..max
-
+        val valid = super.isValid() || getChecked().size in min..max
 
         if (!valid) {
             // TODO Error handling

@@ -18,7 +18,7 @@ class SurveyPageFragment : BaseFragment() {
     private var viewModel: SurveysViewModel? = null
     private var pageTransition: SurveyPageTransition? = null
     private var questions: Array<SurveyQuestion>? = null
-    private var container: LinearLayout? = null
+    private var questionContainer: LinearLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,10 +35,10 @@ class SurveyPageFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val viewGroup = inflater.inflate(R.layout.fragment_survey_page, container, false) as ViewGroup
-        val questionContainer = viewGroup.findViewById<LinearLayout>(R.id.questionsContainer)
+        questionContainer = viewGroup.findViewById<LinearLayout>(R.id.questionsContainer)
         questions?.forEach { question ->
             if (question.shouldRender()) {
-                questionContainer.addView(question.getView(requireContext()))
+                questionContainer?.addView(question.getView(requireContext()))
             }
         }
         return viewGroup
@@ -51,12 +51,11 @@ class SurveyPageFragment : BaseFragment() {
     }
 
     fun canAdvance(): Boolean {
-
-        container?.forEach { view ->
+        questionContainer?.forEach { view ->
             if (view is QuestionView) {
-                if (!view.isValid()) {
+                val valid = view.isValid()
+                if (!valid) {
                     return false
-
                 }
             }
         }
