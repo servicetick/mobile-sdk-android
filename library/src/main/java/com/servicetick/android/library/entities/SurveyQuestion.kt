@@ -4,10 +4,7 @@ import android.content.Context
 import android.os.Parcel
 import androidx.room.Ignore
 import androidx.room.Relation
-import com.servicetick.android.library.view.questions.CheckboxQuestionView
-import com.servicetick.android.library.view.questions.DropdownQuestionView
-import com.servicetick.android.library.view.questions.QuestionView
-import com.servicetick.android.library.view.questions.TextBoxQuestionView
+import com.servicetick.android.library.view.questions.*
 
 internal class SurveyQuestion() : KParcelable {
 
@@ -108,6 +105,7 @@ internal class SurveyQuestion() : KParcelable {
     private fun shouldRenderType(): Boolean = questionType in arrayOf(
             QuestionType.SINGLE_TEXT_BOX,
             QuestionType.MULTIPLE_SELECT_CHECKBOX,
+            QuestionType.SINGLE_SELECT_RADIO,
             QuestionType.DROP_DOWN_BOX
     )
 
@@ -119,6 +117,7 @@ internal class SurveyQuestion() : KParcelable {
         return when (questionType) {
             QuestionType.MULTIPLE_SELECT_CHECKBOX -> CheckboxQuestionView(context)
             QuestionType.SINGLE_TEXT_BOX -> TextBoxQuestionView(context)
+            QuestionType.SINGLE_SELECT_RADIO -> RadioQuestionView(context)
             QuestionType.DROP_DOWN_BOX -> DropdownQuestionView(context)
             else -> QuestionView(context)
         }.apply {
