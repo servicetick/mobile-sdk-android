@@ -7,6 +7,7 @@ import com.servicetick.android.library.dagger.DaggerLibraryComponent
 import com.servicetick.android.library.db.ServiceTickDao
 import com.servicetick.android.library.entities.Survey
 import com.servicetick.android.library.workers.SurveyInitWorker
+import lilhermit.android.remotelogger.library.Log
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 
@@ -17,7 +18,8 @@ class ServiceTick(context: Context) : LifecycleOwner {
     private val surveyMap: MutableMap<Long, Survey> = mutableMapOf()
     private val config: MutableMap<String, Any> = mutableMapOf(
             "base_url" to "https://api.servicetick.com/v1/",
-            "force_refresh" to false
+            "force_refresh" to false,
+            "debug" to false
     )
     internal var clientAccountId: Long? = null
     internal var surveyAccessKey: String? = null
@@ -34,6 +36,7 @@ class ServiceTick(context: Context) : LifecycleOwner {
         lifecycleRegistry.markState(Lifecycle.State.STARTED)
         singleton = this
         appComponent.inject(this)
+        setDebug(config["debug"] as Boolean)
     }
 
     fun addSurvey(surveyBuilder: SurveyBuilder): LiveData<Survey.State> {
@@ -79,8 +82,15 @@ class ServiceTick(context: Context) : LifecycleOwner {
         return surveyMap[id]
     }
 
+    private fun actionConfig(configPair: Pair<String, Any>) {
+        when (configPair.first) {
+            "debug" -> setDebug(configPair.second as Boolean)
+        }
+    }
+
     private fun setConfig(configPair: Pair<String, Any>) {
         config[configPair.first] = configPair.second
+        actionConfig(configPair)
     }
 
     internal fun getBaseUrl(): String {
@@ -94,6 +104,8 @@ class ServiceTick(context: Context) : LifecycleOwner {
     override fun getLifecycle(): Lifecycle {
         return lifecycleRegistry
     }
+
+    private fun setDebug(debug: Boolean) = Log.setLevelLogging(Log.DEBUG to if (debug) Log.LOG_LOCAL_ONLY else Log.LOG_NONE)
 
     companion object {
 

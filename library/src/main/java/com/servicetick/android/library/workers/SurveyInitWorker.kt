@@ -35,6 +35,12 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
             val currentSurvey = serviceTickDao.getSurvey(id)
             if (currentSurvey == null || currentSurvey.isRefreshDue || serviceTick.getForceRefresh()) {
 
+                when {
+                    currentSurvey == null -> Log.d("Refreshing survey: $id Reason: not-in-db")
+                    serviceTick.getForceRefresh() -> Log.d("Refreshing survey: $id Reason: force")
+                    else -> Log.d("Refreshing survey: $id Reason: due")
+                }
+
                 makeApiCall(id)?.let { newSurvey ->
                     updateSurvey(newSurvey, currentSurvey)
                     return Result.SUCCESS
@@ -53,9 +59,16 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
             serviceTickDao.getSurveys().forEach { survey ->
                 if (serviceTick.getForceRefresh() || survey.isRefreshDue) {
 
+                    when {
+                        serviceTick.getForceRefresh() -> Log.d("Refreshing survey: ${survey.id} Reason: force")
+                        else -> Log.d("Refreshing survey: ${survey.id} Reason: due")
+                    }
+
                     makeApiCall(survey.id)?.let { newSurvey ->
                         updateSurvey(newSurvey, survey)
                     }
+                } else {
+                    Log.d("No refresh required for survey: ${survey.id}")
                 }
             }
 
