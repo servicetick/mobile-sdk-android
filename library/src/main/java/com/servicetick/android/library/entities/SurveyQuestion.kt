@@ -105,6 +105,7 @@ internal class SurveyQuestion() : KParcelable {
     private fun shouldRenderType(): Boolean = questionType in arrayOf(
             QuestionType.SINGLE_TEXT_BOX,
             QuestionType.MULTIPLE_SELECT_CHECKBOX,
+            QuestionType.INFORMATION_BOX,
             QuestionType.SINGLE_SELECT_RADIO,
             QuestionType.DROP_DOWN_BOX
     )
@@ -117,6 +118,7 @@ internal class SurveyQuestion() : KParcelable {
         return when (questionType) {
             QuestionType.MULTIPLE_SELECT_CHECKBOX -> CheckboxQuestionView(context)
             QuestionType.SINGLE_TEXT_BOX -> TextBoxQuestionView(context)
+            QuestionType.INFORMATION_BOX -> InformationBoxQuestionView(context)
             QuestionType.SINGLE_SELECT_RADIO -> RadioQuestionView(context)
             QuestionType.DROP_DOWN_BOX -> DropdownQuestionView(context)
             else -> QuestionView(context)
