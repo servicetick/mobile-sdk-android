@@ -45,4 +45,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Constra
     }
 
     open fun isValid() = !isVisible
+
+    protected fun minRequiredAnswers() = question?.minRequiredAnswers ?: 0
+    protected fun maxRequiredAnswers() = question?.maxRequiredAnswers ?: 0
 }

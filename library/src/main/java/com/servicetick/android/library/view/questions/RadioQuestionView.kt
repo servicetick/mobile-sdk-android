@@ -64,10 +64,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
 
     override fun isValid(): Boolean {
 
-        val min = question?.minRequiredAnswers ?: 0
-        val max = question?.maxRequiredAnswers ?: 0
-
-        val valid = super.isValid() || min == 0 || (max != 0 && radioGroup?.checkedRadioButtonId != -1)
+        val valid = super.isValid() || minRequiredAnswers() == 0 || (maxRequiredAnswers() != 0 && radioGroup?.checkedRadioButtonId != -1)
 
         if (!valid) {
             // TODO Error handling

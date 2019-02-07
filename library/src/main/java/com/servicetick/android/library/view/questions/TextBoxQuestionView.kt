@@ -59,7 +59,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
 
     override fun isValid(): Boolean {
 
-        val valid = super.isValid() || question?.minRequiredAnswers == 0 || (question?.minRequiredAnswers != 0 && getEditText()?.text?.isEmpty() == false)
+        val valid = super.isValid() || minRequiredAnswers() == 0 || (minRequiredAnswers() != 0 && getEditText()?.text?.isEmpty() == false)
 
         if (!valid) {
             // TODO Error handling
