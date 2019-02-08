@@ -43,14 +43,14 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
 
                 makeApiCall(id)?.let { newSurvey ->
                     updateSurvey(newSurvey, currentSurvey)
-                    return Result.SUCCESS
+                    return ListenableWorker.Result.success()
 
                 } ?: run {
-                    return Result.RETRY
+                    return ListenableWorker.Result.retry()
                 }
 
             } else {
-                return Result.SUCCESS
+                return ListenableWorker.Result.success()
             }
 
         } else {
@@ -72,7 +72,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
                 }
             }
 
-            return Result.SUCCESS
+            return ListenableWorker.Result.success()
         }
     }
 
