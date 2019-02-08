@@ -17,22 +17,19 @@ open class BaseFragment : Fragment() {
 
     open fun <T : ViewModel> getViewModel(modelClass: Class<T>): T = ViewModelProviders.of(this, viewModelFactory).get(modelClass)
 
-    fun showSnackBar(@StringRes messageRes: Int, view: View? = null, dismiss: Boolean = false, duration: Int = Snackbar.LENGTH_LONG): Snackbar? {
+    protected fun showSnackBar(@StringRes messageRes: Int, view: View? = null, dismiss: Boolean = false, duration: Int = Snackbar.LENGTH_LONG): Snackbar? {
         return showSnackBar(getString(messageRes), view, dismiss, duration)
     }
 
-    fun showSnackBar(message: String?, view: View? = null, dismiss: Boolean = false, duration: Int = Snackbar.LENGTH_LONG): Snackbar? {
+    protected fun showSnackBar(message: String?, view: View? = null, dismiss: Boolean = false, duration: Int = Snackbar.LENGTH_LONG): Snackbar? {
 
-        message?.let { msg ->
-
-            val snackBar = Snackbar.make(view ?: requireActivity().findViewById(android.R.id.content), msg, duration)
-            snackBar.run {
-                if (dismiss) {
-                    setAction(getString(R.string.dismiss)) { dismiss() }
-                }
-                show()
+        val snackBar = Snackbar.make(view ?: requireActivity().findViewById(android.R.id.content), message?:"", duration)
+        return snackBar.run {
+            if (dismiss) {
+                setAction(getString(R.string.dismiss)) { dismiss() }
             }
-            return snackBar
+            show()
+            this
         }
     }
 }
