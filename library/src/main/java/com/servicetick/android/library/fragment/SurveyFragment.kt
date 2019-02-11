@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.servicetick.android.library.R
-import com.servicetick.android.library.ServiceTick
 import com.servicetick.android.library.activity.SurveyActivity
 import com.servicetick.android.library.entities.Survey
 import com.servicetick.android.library.view.ExtendedViewPager
@@ -18,20 +17,13 @@ import com.servicetick.android.library.viewmodel.SurveysViewModel
 import kotlinx.android.synthetic.main.fragment_survey.*
 import kotlinx.android.synthetic.main.fragment_survey.view.*
 import lilhermit.android.remotelogger.library.Log
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SurveyFragment : BaseFragment() {
 
-    private var viewModel: SurveysViewModel? = null
+    private val viewModel: SurveysViewModel by viewModel()
     private var viewPager: ExtendedViewPager? = null
     private lateinit var survey: Survey
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val serviceTick = ServiceTick.get()
-        serviceTick.appComponent.inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -103,11 +95,9 @@ class SurveyFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = getViewModel(SurveysViewModel::class.java)
-
         arguments?.getLong(ARG_SURVEY_ID)?.let { id ->
             if (id > 0L) {
-                viewModel?.getSurvey(id)?.observe(this, Observer {
+                viewModel.getSurvey(id).observe(this, Observer {
                     it?.run {
                         survey = this
                         viewPager?.adapter = SurveyPageAdapter(fragmentManager)

@@ -3,15 +3,15 @@ package com.servicetick.android.library
 import android.content.Context
 import androidx.lifecycle.*
 import androidx.work.WorkInfo
-import com.servicetick.android.library.dagger.DaggerLibraryComponent
 import com.servicetick.android.library.db.ServiceTickDao
 import com.servicetick.android.library.entities.Survey
 import com.servicetick.android.library.workers.SurveyInitWorker
 import lilhermit.android.remotelogger.library.Log
+import org.koin.standalone.KoinComponent
+import org.koin.standalone.inject
 import java.lang.ref.WeakReference
-import javax.inject.Inject
 
-class ServiceTick(context: Context) : LifecycleOwner {
+class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
 
     internal var weakReference = WeakReference<Context>(context.applicationContext)
     private var lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
@@ -24,18 +24,11 @@ class ServiceTick(context: Context) : LifecycleOwner {
     internal var clientAccountId: Long? = null
     internal var surveyAccessKey: String? = null
     internal var importerAccessKey: String? = null
-    internal val appComponent = DaggerLibraryComponent.builder().create(context) as DaggerLibraryComponent
-    @Inject
-    internal lateinit var appExecutors: AppExecutors
-
-
-    @Inject
-    internal lateinit var serviceTickDao: ServiceTickDao
+    private val serviceTickDao: ServiceTickDao by inject()
 
     init {
         lifecycleRegistry.markState(Lifecycle.State.STARTED)
         singleton = this
-        appComponent.inject(this)
         setDebug(config["debug"] as Boolean)
     }
 

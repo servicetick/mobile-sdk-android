@@ -49,13 +49,9 @@ dependencies {
     // Remote Logger
     api 'com.gitlab.lilhermit:remote-logger-client-android:1.0.0-alpha9'
 
-    // Add Dagger dependencies
-    api "com.google.dagger:dagger:$dagger_version"
-    api "com.google.dagger:dagger-android-support:$dagger_version"
-
-    // Dagger pre-processing
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
-    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
+    // Koin for Android
+    api "org.koin:koin-android:$koin_version"
+    api "org.koin:koin-androidx-viewmodel:$koin_version"
 
     // Room
     api "android.arch.persistence.room:runtime:$room_version"

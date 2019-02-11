@@ -7,15 +7,15 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.forEach
 import com.servicetick.android.library.R
-import com.servicetick.android.library.ServiceTick
 import com.servicetick.android.library.entities.SurveyPageTransition
 import com.servicetick.android.library.entities.SurveyQuestion
 import com.servicetick.android.library.view.questions.QuestionView
 import com.servicetick.android.library.viewmodel.SurveysViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SurveyPageFragment : BaseFragment() {
 
-    private var viewModel: SurveysViewModel? = null
+    private val viewModel: SurveysViewModel by viewModel()
     private var pageTransition: SurveyPageTransition? = null
     private var questions: Array<SurveyQuestion>? = null
     private var questionContainer: LinearLayout? = null
@@ -29,8 +29,6 @@ class SurveyPageFragment : BaseFragment() {
             questions = getParcelableArray(ARG_QUESTIONS) as Array<SurveyQuestion>?
         }
 
-        val serviceTick = ServiceTick.get()
-        serviceTick.appComponent.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -42,12 +40,6 @@ class SurveyPageFragment : BaseFragment() {
             }
         }
         return viewGroup
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        viewModel = getViewModel(SurveysViewModel::class.java)
     }
 
     fun canAdvance(): Boolean {

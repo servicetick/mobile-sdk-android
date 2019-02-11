@@ -9,7 +9,9 @@ import android.net.Uri
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.servicetick.android.library.ServiceTick
+import com.servicetick.android.library.di.libraryModule
 import lilhermit.android.remotelogger.library.Log
+import org.koin.android.ext.android.startKoin
 
 class ServiceTickInitialiserProvider : ContentProvider() {
 
@@ -31,6 +33,8 @@ class ServiceTickInitialiserProvider : ContentProvider() {
             }
 
             ServiceTick.internalInit(this)
+
+            startKoin(this, listOf(libraryModule))
         }
         return true
     }

@@ -12,22 +12,18 @@ import com.servicetick.android.library.entities.api.PostSurveyRequest
 import com.servicetick.android.library.entities.db.BaseSurvey
 import io.multifunctions.letCheckNull
 import lilhermit.android.remotelogger.library.Log
+import org.koin.standalone.KoinComponent
+import org.koin.standalone.inject
 import java.util.*
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
+internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Worker(context, params), KoinComponent {
 
-    @Inject
-    lateinit var apiService: ApiService
-    @Inject
-    lateinit var serviceTickDao: ServiceTickDao
-    private lateinit var serviceTick: ServiceTick
+    private val apiService: ApiService by inject()
+    private val serviceTickDao: ServiceTickDao by inject()
+    private val serviceTick: ServiceTick by inject()
 
     override fun doWork(): Result {
-
-        serviceTick = ServiceTick.get()
-        serviceTick.appComponent.inject(this)
 
         val id = inputData.getLong(KEY_ID, 0L)
         if (id != 0L) {
