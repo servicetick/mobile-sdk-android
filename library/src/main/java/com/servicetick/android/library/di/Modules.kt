@@ -19,21 +19,25 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val libraryModule = module {
 
+    /** ServiceTickDatabase */
     single {
         Room.databaseBuilder(androidContext(), ServiceTickDatabase::class.java, "service_tick.db").build()
     }
 
+    /** ServiceTickDao */
     single {
-        val db: ServiceTickDatabase = get()
-        db.serviceTickDao()
+        (get() as ServiceTickDatabase).serviceTickDao()
     }
 
+    /** Gson */
     single {
         GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create()
     }
 
+    /** OKHttpClient */
     single {
         val httpClientBuilder = OkHttpClient.Builder()
 
@@ -47,28 +51,34 @@ val libraryModule = module {
         httpClientBuilder.build()
     }
 
+    /** ApiService */
     single<ApiService> {
         Retrofit.Builder()
                 .baseUrl(ServiceTick.get().getBaseUrl())
                 .client(get())
-                .addConverterFactory(GsonConverterFactory.create((get() as GsonBuilder).create()))
+                .addConverterFactory(GsonConverterFactory.create(get()))
 //                .addCallAdapterFactory(LiveDataCallAdapterFactory())
                 .build()
                 .create<ApiService>(ApiService::class.java)
     }
 
+    /** ServiceTick */
     single {
         ServiceTick.get()
     }
 
+    /** SurveyRepository */
     single {
         SurveyRepository(get(), get())
     }
 
+    /** AppExecutors */
     single {
         AppExecutors()
     }
 
-    viewModel { SurveysViewModel(get()) }
-
+    /** SurveysViewModel */
+    viewModel {
+        SurveysViewModel(get())
+    }
 }
