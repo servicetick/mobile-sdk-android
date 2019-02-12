@@ -1,14 +1,13 @@
 package com.servicetick.android.library.entities.db
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.servicetick.android.library.entities.SurveyQuestionOption
 
-@Entity(tableName = "survey_questions", foreignKeys = [ForeignKey(entity = BaseSurvey::class, parentColumns = ["id"], childColumns = ["surveyId"], onDelete = ForeignKey.CASCADE)])
+@Entity(tableName = "survey_questions",
+        foreignKeys = [ForeignKey(entity = BaseSurvey::class, parentColumns = ["id"], childColumns = ["surveyId"], onDelete = ForeignKey.CASCADE)],
+        indices = [Index(value = ["surveyId"])])
 internal class BaseSurveyQuestion {
 
     @Expose
