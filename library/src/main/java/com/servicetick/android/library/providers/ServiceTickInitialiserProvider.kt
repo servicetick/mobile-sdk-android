@@ -12,6 +12,7 @@ import com.servicetick.android.library.ServiceTick
 import com.servicetick.android.library.di.libraryModule
 import lilhermit.android.remotelogger.library.Log
 import org.koin.android.ext.android.startKoin
+import org.koin.log.EmptyLogger
 
 class ServiceTickInitialiserProvider : ContentProvider() {
 
@@ -34,7 +35,7 @@ class ServiceTickInitialiserProvider : ContentProvider() {
 
             ServiceTick.internalInit(this)
 
-            startKoin(this, listOf(libraryModule))
+            startKoin(this, listOf(libraryModule), logger = EmptyLogger())
         }
         return true
     }

@@ -7,6 +7,9 @@ import com.servicetick.android.library.db.ServiceTickDao
 import com.servicetick.android.library.entities.Survey
 import com.servicetick.android.library.workers.SurveyInitWorker
 import lilhermit.android.remotelogger.library.Log
+import org.koin.android.logger.AndroidLogger
+import org.koin.core.Koin
+import org.koin.log.EmptyLogger
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import java.lang.ref.WeakReference
@@ -98,7 +101,15 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
         return lifecycleRegistry
     }
 
-    private fun setDebug(debug: Boolean) = Log.setLevelLogging(Log.DEBUG to if (debug) Log.LOG_LOCAL_ONLY else Log.LOG_NONE)
+    private fun setDebug(debug: Boolean) {
+        if (debug) {
+            Koin.logger = AndroidLogger()
+            Log.setLevelLogging(Log.DEBUG to Log.LOG_LOCAL_ONLY)
+        } else {
+            Koin.logger = EmptyLogger()
+            Log.setLevelLogging(Log.DEBUG to Log.LOG_NONE)
+        }
+    }
 
     companion object {
 
