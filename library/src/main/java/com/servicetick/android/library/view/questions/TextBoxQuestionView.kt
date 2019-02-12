@@ -29,6 +29,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
     override fun updateView() {
         super.updateView()
         getEditText()?.run {
+            id = question?.id?.toInt() ?: -1
             when (question?.textBoxType) {
                 "SingleLine" -> {
                     setSingleLine()
