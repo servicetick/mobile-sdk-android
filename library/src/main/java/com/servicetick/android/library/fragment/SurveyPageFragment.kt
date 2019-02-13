@@ -11,11 +11,11 @@ import com.servicetick.android.library.entities.SurveyPageTransition
 import com.servicetick.android.library.entities.SurveyQuestion
 import com.servicetick.android.library.view.questions.QuestionView
 import com.servicetick.android.library.viewmodel.SurveysViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class SurveyPageFragment : BaseFragment() {
 
-    private val viewModel: SurveysViewModel by viewModel()
+    private val viewModel: SurveysViewModel by sharedViewModel()
     private var pageTransition: SurveyPageTransition? = null
     private var questions: Array<SurveyQuestion>? = null
     private var questionContainer: LinearLayout? = null

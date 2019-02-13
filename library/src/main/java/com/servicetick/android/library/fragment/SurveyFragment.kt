@@ -17,11 +17,11 @@ import com.servicetick.android.library.viewmodel.SurveysViewModel
 import kotlinx.android.synthetic.main.fragment_survey.*
 import kotlinx.android.synthetic.main.fragment_survey.view.*
 import lilhermit.android.remotelogger.library.Log
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class SurveyFragment : BaseFragment() {
 
-    private val viewModel: SurveysViewModel by viewModel()
+    private val viewModel: SurveysViewModel by sharedViewModel()
     private var viewPager: ExtendedViewPager? = null
     private lateinit var survey: Survey
 
