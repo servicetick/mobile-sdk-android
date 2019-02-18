@@ -5,6 +5,7 @@ import androidx.room.*
 import com.servicetick.android.library.entities.*
 import com.servicetick.android.library.entities.db.BaseSurvey
 import com.servicetick.android.library.entities.db.BaseSurveyQuestion
+import com.servicetick.android.library.entities.db.BaseSurveyResponse
 
 @Dao
 internal interface ServiceTickDao {
@@ -36,6 +37,17 @@ internal interface ServiceTickDao {
         insertSurveyQuestionOptionActions(survey.questionOptionActions)
     }
 
+    @Transaction
+    fun insert(surveyResponse: SurveyResponse) {
+        val baseSurveyResponse = BaseSurveyResponse(surveyResponse)
+        baseSurveyResponse.id = insertSurveyResponse(baseSurveyResponse)
+
+        surveyResponse.answers.forEach {
+            it.surveyResponseId = baseSurveyResponse.id
+        }
+        insertSurveyResponseAnswers(surveyResponse.answers)
+    }
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSurvey(survey: BaseSurvey)
 
@@ -54,6 +66,12 @@ internal interface ServiceTickDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSurveyQuestionOptions(entities: List<SurveyQuestionOption>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertSurveyResponse(surveyResponse: BaseSurveyResponse): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertSurveyResponseAnswers(surveyResponseAnswers: List<SurveyResponseAnswer>)
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun update(entity: BaseSurvey?)
 
@@ -67,6 +85,14 @@ internal interface ServiceTickDao {
     @Transaction
     @Query("SELECT * FROM surveys WHERE surveys.id=:id")
     fun getSurveyAsLiveData(id: Long): LiveData<Survey?>
+
+    @Transaction
+    @Query("SELECT * FROM survey_responses WHERE survey_responses.surveyId=:surveyId")
+    fun getSurveyResponseAsLiveData(surveyId: Long): LiveData<SurveyResponse?>
+
+    @Transaction
+    @Query("SELECT * FROM survey_responses WHERE survey_responses.surveyId=:surveyId")
+    fun getSurveyResponse(surveyId: Long): SurveyResponse?
 
     @Transaction
     @Query("SELECT * FROM survey_questions WHERE survey_questions.pageId=:pageId")

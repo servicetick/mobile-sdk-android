@@ -7,8 +7,10 @@ import com.servicetick.android.library.db.converters.Converters
 import com.servicetick.android.library.entities.SurveyPageTransition
 import com.servicetick.android.library.entities.SurveyQuestionOption
 import com.servicetick.android.library.entities.SurveyQuestionOptionAction
+import com.servicetick.android.library.entities.SurveyResponseAnswer
 import com.servicetick.android.library.entities.db.BaseSurvey
 import com.servicetick.android.library.entities.db.BaseSurveyQuestion
+import com.servicetick.android.library.entities.db.BaseSurveyResponse
 
 
 @Database(entities = [
@@ -16,7 +18,9 @@ import com.servicetick.android.library.entities.db.BaseSurveyQuestion
     SurveyPageTransition::class,
     SurveyQuestionOptionAction::class,
     BaseSurveyQuestion::class,
-    SurveyQuestionOption::class
+    SurveyQuestionOption::class,
+    BaseSurveyResponse::class,
+    SurveyResponseAnswer::class
 ], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 internal abstract class ServiceTickDatabase : RoomDatabase() {
