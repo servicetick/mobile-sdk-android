@@ -100,6 +100,7 @@ class SurveyFragment : BaseFragment() {
                 viewModel.getSurvey(id).observe(this, Observer {
                     it?.run {
                         survey = this
+                        survey.injectResponseAnswers()
                         viewPager?.adapter = SurveyPageAdapter(fragmentManager)
                         updateView()
                     }

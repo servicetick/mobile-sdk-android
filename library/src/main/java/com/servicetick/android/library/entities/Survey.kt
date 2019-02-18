@@ -4,16 +4,21 @@ import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.room.Ignore
 import androidx.room.Relation
+import com.servicetick.android.library.AppExecutors
 import com.servicetick.android.library.ServiceTick
 import com.servicetick.android.library.activity.SurveyActivity
 import com.servicetick.android.library.entities.db.BaseSurveyQuestion
+import com.servicetick.android.library.entities.db.BaseSurveyResponse
 import com.servicetick.android.library.fragment.SurveyFragment
 import com.servicetick.android.library.triggers.ManualTrigger
 import com.servicetick.android.library.triggers.Trigger
+import org.koin.standalone.KoinComponent
+import org.koin.standalone.get
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class Survey internal constructor(val id: Long) {
+
+class Survey internal constructor(val id: Long) : KoinComponent {
 
     @PublishedApi
     internal var title: String? = null
@@ -55,6 +60,10 @@ class Survey internal constructor(val id: Long) {
     @Ignore
     internal var triggers: MutableList<Trigger> = mutableListOf()
 
+    @Relation(parentColumn = "id", entityColumn = "surveyId", entity = BaseSurveyResponse::class)
+    @PublishedApi
+    internal var response: MutableList<SurveyResponse> = mutableListOf()
+
     fun addTrigger(trigger: Trigger) {
     }
 
@@ -76,12 +85,59 @@ class Survey internal constructor(val id: Long) {
         }
     }
 
-    fun getPageCount() : Int = pageTransitions.size
+    @Ignore
+    private var isAnswerInjectionComplete = false
+
+    internal fun getPageCount(): Int = pageTransitions.size
 
     fun start(presentation: Trigger.Presentation = Trigger.Presentation.START_ACTIVITY): Fragment? = startTrigger(ManualTrigger(presentation))
 
     override fun toString(): String {
         return "Survey(id=$id, title=$title, type=$type, state=$state, lastUpdated=${lastUpdated?.time.toString()}, refreshInterval=$refreshInterval)\n   pageTransitions=$pageTransitions\n   questionOptionActions=$questionOptionActions\n   questions=$questions\n"
+    }
+
+    internal fun injectResponseAnswers() {
+
+        if (!isAnswerInjectionComplete) {
+
+            val appExecutors: AppExecutors = get()
+            appExecutors.generalBackground().execute {
+
+                getResponse().answers.forEach { answer ->
+                    questions.find {
+                        it.id == answer.surveyQuestionId
+                    }.run {
+                        this?.answer = answer
+                    }
+                }
+                isAnswerInjectionComplete = true
+            }
+        }
+    }
+
+    internal fun getResponse(): SurveyResponse {
+        return if (response.isNotEmpty()) {
+            response.last()
+        } else {
+            buildResponse().also {
+                response.add(it)
+                it.save()
+            }
+        }
+    }
+
+    private fun buildResponse(): SurveyResponse {
+        return SurveyResponse().apply {
+            surveyId = this@Survey.id
+            questions.filter {
+                it.isAnswerable()
+            }.forEach { question ->
+                addAnswer(SurveyResponseAnswer().apply {
+                    surveyQuestionId = question.id ?: 0
+                    surveyQuestionTypeId = question.questionTypeId
+                })
+            }
+        }
     }
 
     companion object {

@@ -46,6 +46,9 @@ internal class SurveyQuestion() : KParcelable {
 
     var completed: Boolean = false
 
+    @Ignore
+    internal var answer : SurveyResponseAnswer? = null
+
     @Relation(parentColumn = "id", entityColumn = "questionId")
     var options: List<SurveyQuestionOption>? = emptyList()
 
@@ -108,6 +111,14 @@ internal class SurveyQuestion() : KParcelable {
             QuestionType.INFORMATION_BOX,
             QuestionType.SINGLE_SELECT_RADIO,
             QuestionType.DROP_DOWN_BOX
+    )
+
+    internal fun isAnswerable() : Boolean = questionType in arrayOf(
+            QuestionType.SINGLE_TEXT_BOX,
+            QuestionType.MULTIPLE_SELECT_CHECKBOX,
+            QuestionType.SINGLE_SELECT_RADIO,
+            QuestionType.DROP_DOWN_BOX,
+            QuestionType.TABLE_QUESTION
     )
 
     override fun toString(): String {
