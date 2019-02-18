@@ -14,7 +14,7 @@ import com.servicetick.android.library.R
 import com.servicetick.android.library.entities.SurveyQuestion
 import com.servicetick.android.library.ktx.toDp
 
-internal open class QuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+internal abstract class QuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     var question: SurveyQuestion? = null

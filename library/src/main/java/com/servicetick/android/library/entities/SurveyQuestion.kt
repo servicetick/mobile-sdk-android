@@ -123,7 +123,7 @@ internal class SurveyQuestion() : KParcelable {
             QuestionType.JUMP_TO_PAGE -> JumpToPageQuestionView(context)
             QuestionType.DROP_DOWN_BOX -> DropdownQuestionView(context)
             QuestionType.TABLE_QUESTION -> TableQuestionView(context)
-            else -> QuestionView(context)
+            else -> InformationBoxQuestionView(context)
         }.apply {
             question = this@SurveyQuestion
             id = this@SurveyQuestion.id?.toInt() ?: -1
