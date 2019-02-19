@@ -17,7 +17,7 @@ import com.servicetick.android.library.ktx.toDp
 internal abstract class QuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    var question: SurveyQuestion? = null
+    internal var question: SurveyQuestion? = null
         set(value) {
             field = value
             updateView()
@@ -26,25 +26,25 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Constra
     @JvmOverloads
     internal constructor(context: Context, @Nullable attrs: AttributeSet? = null) : this(context, attrs, 0)
 
-    open fun updateView() {
+    protected open fun updateView() {
         setupQuestionText()
 
         isGone = !(question?.initiallyVisible ?: true)
     }
 
-    open fun setupQuestionText() {
+    protected open fun setupQuestionText() {
         findViewById<TextView>(R.id.question)?.run {
             text = question?.question
         }
     }
 
-    open fun postLayout(view: View?) {
+    protected open fun postLayout(view: View?) {
         setPadding(16.toDp(resources), 16.toDp(resources), 16.toDp(resources), 16.toDp(resources))
         view?.run {
         }
     }
 
-    open fun isValid() = !isVisible
+    internal open fun isValid() = !isVisible
 
     protected fun minRequiredAnswers() = question?.minRequiredAnswers ?: 0
     protected fun maxRequiredAnswers() = question?.maxRequiredAnswers ?: 0
