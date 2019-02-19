@@ -68,6 +68,12 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
             }.apply {
                 setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             }
+
+            options.forEachIndexed { index, surveyQuestionOption ->
+                if (surveyQuestionOption.id == getAnswerId()) {
+                    setSelection(index)
+                }
+            }
         }
     }
 

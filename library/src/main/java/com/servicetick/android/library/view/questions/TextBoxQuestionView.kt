@@ -42,6 +42,10 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
                     minHeight = 128.toDp(resources)
                 }
             }
+
+            question?.answer?.let { answer ->
+                setText(answer.answer)
+            }
         }
     }
 

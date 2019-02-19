@@ -42,18 +42,16 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
 
             flexDirection = if (question?.horizontal == true) FlexDirection.ROW else FlexDirection.COLUMN
 
-            question?.options?.forEach {
-                addView(createCheckbox(it))
+            question?.options?.forEach { option ->
+                addView(createCheckbox(option))
             }
         }
     }
 
-    private fun createCheckbox(questionOption: SurveyQuestionOption): AppCompatCheckBox {
-
-        val checkbox = AppCompatCheckBox(context)
-        checkbox.text = questionOption.option
-        checkbox.id = questionOption.id?.toInt() ?: -1
-        return checkbox
+    private fun createCheckbox(questionOption: SurveyQuestionOption) = AppCompatCheckBox(context).apply {
+        text = questionOption.option
+        id = questionOption.id?.toInt() ?: -1
+        isChecked = questionOption.id == getAnswerId()
     }
 
     private fun getCheckedIds() = arrayListOf<Int>().apply {

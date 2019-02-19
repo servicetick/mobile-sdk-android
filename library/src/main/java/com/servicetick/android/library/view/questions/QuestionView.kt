@@ -50,6 +50,9 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Constra
     }
 
     protected fun isAnswerSyncable() = question?.isAnswerable() == true && question?.answer != null
+    protected fun getAnswerId() = question?.answer?.answer.let { answer ->
+        if (answer.isNullOrEmpty()) -1L else answer.toLong()
+    }
 
     protected fun minRequiredAnswers() = question?.minRequiredAnswers ?: 0
     protected fun maxRequiredAnswers() = question?.maxRequiredAnswers ?: 0

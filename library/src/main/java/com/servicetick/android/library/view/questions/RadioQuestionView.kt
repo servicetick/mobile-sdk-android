@@ -40,8 +40,10 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
 
         radioGroup?.run {
 
-            question?.options?.forEach {
-                addView(radioButton(it), RadioGroup.LayoutParams(0, RadioGroup.LayoutParams.WRAP_CONTENT, 1f))
+            question?.let { surveyQuestion ->
+                surveyQuestion.options?.forEach {
+                    addView(radioButton(it), RadioGroup.LayoutParams(0, RadioGroup.LayoutParams.WRAP_CONTENT, 1f))
+                }
             }
         }
     }
@@ -49,6 +51,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
     private fun radioButton(questionOption: SurveyQuestionOption): AppCompatRadioButton = AppCompatRadioButton(context).apply {
         text = questionOption.option
         id = questionOption.id?.toInt() ?: -1
+        isChecked = getAnswerId() == questionOption.id
     }
 
     private fun getCheckedIds() = arrayListOf<Int>().apply {
