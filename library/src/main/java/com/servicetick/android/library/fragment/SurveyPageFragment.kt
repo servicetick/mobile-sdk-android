@@ -56,7 +56,6 @@ class SurveyPageFragment : BaseFragment() {
         questionContainer?.forEach { questionView ->
             if (questionView is QuestionView) {
                 questionView.syncAnswer()
-                questionView.question
             }
         }
     }
