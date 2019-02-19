@@ -80,7 +80,8 @@ class SurveyFragment : BaseFragment() {
             return
         }
 
-//        saveState()
+        getCurrentFragment().syncPageAnswers()
+        survey.getResponse().save()
 
         viewPager?.let { viewPager ->
 
@@ -122,12 +123,7 @@ class SurveyFragment : BaseFragment() {
             return if (fragment !== null) {
                 fragment
             } else {
-                val questions  = survey.questions.filter {
-                    it.pageId ==survey.pageTransitions[position].sourcePageId
-                }.sortedBy {
-                    it.questionOrder
-                }
-                SurveyPageFragment.create(survey.pageTransitions[position], questions)
+                SurveyPageFragment.create(survey.pageTransitions[position])
             }
         }
 

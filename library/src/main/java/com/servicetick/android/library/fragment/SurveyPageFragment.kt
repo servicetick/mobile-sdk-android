@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.forEach
+import androidx.lifecycle.Observer
 import com.servicetick.android.library.R
 import com.servicetick.android.library.entities.SurveyPageTransition
 import com.servicetick.android.library.entities.SurveyQuestion
@@ -16,31 +17,28 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 class SurveyPageFragment : BaseFragment() {
 
     private val viewModel: SurveysViewModel by sharedViewModel()
-    private var pageTransition: SurveyPageTransition? = null
-    private var questions: Array<SurveyQuestion>? = null
-    private var questionContainer: LinearLayout? = null
+    private val pageTransition: SurveyPageTransition? by lazy { arguments?.getParcelable<SurveyPageTransition>(ARG_PAGE_TRANSITION) }
+    private var questions: List<SurveyQuestion>? = null
+    private val questionContainer: LinearLayout? by lazy { view?.findViewById<LinearLayout>(R.id.questionsContainer) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.run {
-            pageTransition = getParcelable(ARG_PAGE_TRANSITION)
-            @Suppress("UNCHECKED_CAST")
-            questions = getParcelableArray(ARG_QUESTIONS) as Array<SurveyQuestion>?
-        }
+        pageTransition?.let { page ->
 
+            viewModel.getQuestionsForPage(page.sourcePageId).observe(this, Observer { questionsList ->
+
+                questions = questionsList
+                questionsList.forEach { question ->
+                    if (question.shouldRender()) {
+                        questionContainer?.addView(question.getView(requireContext()))
+                    }
+                }
+            })
+        }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val viewGroup = inflater.inflate(R.layout.fragment_survey_page, container, false) as ViewGroup
-        questionContainer = viewGroup.findViewById<LinearLayout>(R.id.questionsContainer)
-        questions?.forEach { question ->
-            if (question.shouldRender()) {
-                questionContainer?.addView(question.getView(requireContext()))
-            }
-        }
-        return viewGroup
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.fragment_survey_page, container, false) as ViewGroup
 
     fun canAdvance(): Boolean {
         questionContainer?.forEach { view ->
@@ -54,17 +52,24 @@ class SurveyPageFragment : BaseFragment() {
         return true
     }
 
+    fun syncPageAnswers() {
+        questionContainer?.forEach { questionView ->
+            if (questionView is QuestionView) {
+                questionView.syncAnswer()
+                questionView.question
+            }
+        }
+    }
+
     fun isCompletePage(): Boolean = pageTransition?.isCompletionPage ?: false
 
     companion object {
         private const val ARG_PAGE_TRANSITION = "com.servicetick.android.library.fragment.survey_page_fragment.page_transition"
-        private const val ARG_QUESTIONS = "com.servicetick.android.library.fragment.survey_page_fragment.questions"
 
-        internal fun create(pageTransition: SurveyPageTransition, questions: List<SurveyQuestion>): SurveyPageFragment {
+        internal fun create(pageTransition: SurveyPageTransition): SurveyPageFragment {
             val fragment = SurveyPageFragment()
             Bundle().run {
                 putParcelable(ARG_PAGE_TRANSITION, pageTransition)
-                putParcelableArray(ARG_QUESTIONS, questions.toTypedArray())
                 fragment.arguments = this
             }
             return fragment
