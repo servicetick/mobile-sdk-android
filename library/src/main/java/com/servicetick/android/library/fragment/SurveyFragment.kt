@@ -48,6 +48,9 @@ class SurveyFragment : BaseFragment() {
         }
         view.buttonFinish.setOnClickListener {
             if (getCurrentFragment().canAdvance()) {
+
+                survey.getResponse().complete()
+
                 // Finish the fragment / activity
                 // TODO potential callback on completion?!
                 if (requireActivity() is SurveyActivity) {

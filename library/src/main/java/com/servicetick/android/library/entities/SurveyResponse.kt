@@ -69,4 +69,11 @@ internal class SurveyResponse : KoinComponent {
         val surveyRepository: SurveyRepository = get()
         surveyRepository.saveResponse(this)
     }
+
+    internal fun complete() {
+        isComplete = true
+        save()
+
+        // TODO schedule the sync
+    }
 }
