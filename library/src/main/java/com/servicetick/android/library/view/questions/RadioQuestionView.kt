@@ -51,16 +51,13 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
         id = questionOption.id?.toInt() ?: -1
     }
 
-    private fun getChecked(): Array<String> {
-        val checked = arrayListOf<String>()
+    private fun getCheckedIds() = arrayListOf<Int>().apply {
         radioGroup?.forEach { view ->
             if (view is RadioButton && view.isChecked) {
-                checked.add(view.text.toString())
+                add(view.id)
             }
         }
-
-        return checked.toTypedArray()
-    }
+    }.toTypedArray()
 
     override fun isValid(): Boolean {
 
@@ -72,5 +69,11 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
         }
 
         return valid
+    }
+
+    override fun syncAnswer() {
+        if (isAnswerSyncable()) {
+            question?.answer?.answer = getCheckedIds().joinToString()
+        }
     }
 }

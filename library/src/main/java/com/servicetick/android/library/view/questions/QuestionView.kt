@@ -45,6 +45,11 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Constra
     }
 
     internal open fun isValid() = !isVisible
+    internal open fun syncAnswer() {
+        // NOOP
+    }
+
+    protected fun isAnswerSyncable() = question?.isAnswerable() == true && question?.answer != null
 
     protected fun minRequiredAnswers() = question?.minRequiredAnswers ?: 0
     protected fun maxRequiredAnswers() = question?.maxRequiredAnswers ?: 0

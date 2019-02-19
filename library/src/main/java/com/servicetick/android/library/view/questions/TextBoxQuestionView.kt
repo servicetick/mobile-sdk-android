@@ -69,4 +69,10 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
 
         return valid
     }
+
+    override fun syncAnswer() {
+        if (isAnswerSyncable()) {
+            question?.answer?.answer = getEditText()?.text.toString()
+        }
+    }
 }

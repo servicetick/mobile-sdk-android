@@ -56,19 +56,16 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
         return checkbox
     }
 
-    private fun getChecked(): Array<String> {
-        val checked = arrayListOf<String>()
+    private fun getCheckedIds() = arrayListOf<Int>().apply {
         checkboxContainer?.forEach { view ->
             if (view is AppCompatCheckBox && view.isChecked) {
-                checked.add(view.text.toString())
+                add(view.id)
             }
         }
-
-        return checked.toTypedArray()
     }
 
     override fun isValid(): Boolean {
-        val valid = super.isValid() || getChecked().size in minRequiredAnswers()..maxRequiredAnswers()
+        val valid = super.isValid() || getCheckedIds().size in minRequiredAnswers()..maxRequiredAnswers()
 
         if (!valid) {
             // TODO Error handling
@@ -76,5 +73,11 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
         }
 
         return valid
+    }
+
+    override fun syncAnswer() {
+        if (isAnswerSyncable()) {
+            question?.answer?.answer = getCheckedIds().joinToString("/")
+        }
     }
 }
