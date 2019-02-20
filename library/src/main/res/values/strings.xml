@@ -7,5 +7,6 @@
     <string name="dismiss">Dismiss</string>
     <string name="missed_required_questions">You have missed some required questions, please review your answers.</string>
     <string name="please_select_one">Please select one</string>
+    <string name="must_complete_question">You must complete this question</string>
 
 </resources>
