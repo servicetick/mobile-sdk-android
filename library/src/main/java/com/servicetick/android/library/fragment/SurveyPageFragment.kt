@@ -45,6 +45,8 @@ class SurveyPageFragment : BaseFragment() {
             if (view is QuestionView) {
                 val valid = view.isValid()
                 if (!valid) {
+                    // Scroll to the error'ing view
+                    getView()?.scrollTo(0, view.top)
                     return false
                 }
             }
