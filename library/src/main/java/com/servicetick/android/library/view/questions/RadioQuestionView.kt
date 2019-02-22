@@ -64,9 +64,10 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
                             surveyQuestion.options?.first()?.descriptor,
                             surveyQuestion.options?.last()?.descriptor))
 
-                    if (question?.answer?.answer != null) {
+                    val answerId = getAnswerId()
+                    if (answerId != -1L) {
                         val progress = surveyQuestion.options?.indexOfFirst {
-                            it.id == getAnswerId()
+                            it.id == answerId
                         }?.toFloat() ?: 0f
 
                         setProgress(progress)
