@@ -81,6 +81,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
 
                         override fun onSeeking(seekParams: SeekParams?) {
                             sliderValue = seekParams?.progress
+                            clearError()
                         }
                     }
                 }
@@ -91,6 +92,8 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
                     surveyQuestion.options?.forEach {
                         addView(radioButton(it), RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT))
                     }
+
+                    setOnCheckedChangeListener { _, _ -> clearError() }
                 }
             }
         }
@@ -118,10 +121,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
             (maxRequiredAnswers() != 0 && radioGroup?.checkedRadioButtonId != -1)
         }
 
-        if (!valid) {
-            // TODO Error handling
-//            setError()
-        }
+        if (valid) clearError() else setError(R.string.must_complete_question)
 
         return valid
     }

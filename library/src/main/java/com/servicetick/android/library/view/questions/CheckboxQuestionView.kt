@@ -52,6 +52,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
         text = questionOption.option
         id = questionOption.id?.toInt() ?: -1
         isChecked = questionOption.id == getAnswerId()
+        setOnCheckedChangeListener { _, _ -> clearError() }
     }
 
     private fun getCheckedIds() = arrayListOf<Int>().apply {
@@ -65,10 +66,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
     override fun isValid(): Boolean {
         val valid = super.isValid() || getCheckedIds().size in minRequiredAnswers()..maxRequiredAnswers()
 
-        if (!valid) {
-            // TODO Error handling
-//            setError()
-        }
+        if (valid) clearError() else setError(R.string.must_complete_question)
 
         return valid
     }

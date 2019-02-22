@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.Nullable
+import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -22,6 +23,9 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Constra
             field = value
             updateView()
         }
+    private val errorTextView: TextView by lazy {
+        findViewById<TextView>(R.id.errorMessage)
+    }
 
     @JvmOverloads
     internal constructor(context: Context, @Nullable attrs: AttributeSet? = null) : this(context, attrs, 0)
@@ -56,4 +60,17 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Constra
 
     protected fun minRequiredAnswers() = question?.minRequiredAnswers ?: 0
     protected fun maxRequiredAnswers() = question?.maxRequiredAnswers ?: 0
+
+    protected open fun setError(@StringRes resId: Int) {
+        errorTextView.run {
+            visibility = View.VISIBLE
+            setText(resId)
+        }
+    }
+
+    protected open fun clearError() {
+        errorTextView.run {
+            visibility = View.INVISIBLE
+        }
+    }
 }

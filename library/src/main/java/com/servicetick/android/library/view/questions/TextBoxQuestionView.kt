@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import androidx.annotation.Nullable
+import androidx.annotation.StringRes
 import androidx.core.content.getSystemService
 import com.google.android.material.textfield.TextInputLayout
 import com.servicetick.android.library.R
@@ -34,7 +35,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
             id = question?.id?.toInt() ?: -1
             addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
-                    textInputLayout?.error = ""
+                    clearError()
                 }
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -80,7 +81,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
 
         val valid = super.isValid() || minRequiredAnswers() == 0 || (minRequiredAnswers() != 0 && getEditText()?.text?.isEmpty() == false)
 
-        textInputLayout?.error = if (!valid) context.getString(R.string.must_complete_question) else ""
+        if (!valid) setError(R.string.must_complete_question) else clearError()
 
         return valid
     }
@@ -89,5 +90,13 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
         if (isAnswerSyncable()) {
             question?.answer?.answer = getEditText()?.text.toString()
         }
+    }
+
+    override fun setError(@StringRes resId: Int) {
+        textInputLayout?.error = context.getString(resId)
+    }
+
+    override fun clearError() {
+        textInputLayout?.error = ""
     }
 }

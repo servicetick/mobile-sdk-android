@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.annotation.Nullable
@@ -69,6 +70,16 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
                 setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             }
 
+            onItemSelectedListener = object  : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    clearError()
+                }
+
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    clearError()
+                }
+            }
+
             options.forEachIndexed { index, surveyQuestionOption ->
                 if (surveyQuestionOption.id == getAnswerId()) {
                     setSelection(index)
@@ -80,10 +91,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
     override fun isValid(): Boolean {
         val valid = super.isValid() || minRequiredAnswers() == 0 || (minRequiredAnswers() != 0 && spinner?.selectedItemId ?: -1 > 0)
 
-        if (!valid) {
-            // TODO Error handling
-//            setError()
-        }
+        if (valid) clearError() else setError(R.string.must_complete_question)
 
         return valid
     }
