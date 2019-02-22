@@ -1,5 +1,6 @@
 package com.servicetick.android.library.fragment
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -45,8 +46,14 @@ class SurveyPageFragment : BaseFragment() {
             if (view is QuestionView) {
                 val valid = view.isValid()
                 if (!valid) {
+
                     // Scroll to the error'ing view
-                    getView()?.scrollTo(0, view.top)
+                    Rect().let { rect ->
+                        getView()?.getHitRect(rect)
+                        if (!view.getLocalVisibleRect(rect)) {
+                            getView()?.scrollTo(0, view.top)
+                        }
+                    }
                     return false
                 }
             }
