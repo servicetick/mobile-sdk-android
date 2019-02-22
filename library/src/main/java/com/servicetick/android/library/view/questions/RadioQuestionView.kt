@@ -22,8 +22,12 @@ import com.warkiz.widget.SeekParams
 internal class RadioQuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : QuestionView(context, attrs, defStyleAttr) {
 
-    private var radioGroup: RadioGroup? = null
-    private var indicatorSeekBar: IndicatorSeekBar? = null
+    private val radioGroup: RadioGroup by lazy {
+        findViewById<RadioGroup>(R.id.radioGroup)
+    }
+    private val indicatorSeekBar: IndicatorSeekBar? by lazy {
+        findViewById<IndicatorSeekBar>(R.id.indicatorSeekBar)
+    }
     private var renderSlider: Boolean = false
     private var sliderValue: Int? = null
 
@@ -33,15 +37,6 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
 
     @JvmOverloads
     internal constructor(context: Context, @Nullable attrs: AttributeSet? = null) : this(context, attrs, 0)
-
-    override fun postLayout(view: View?) {
-        super.postLayout(view)
-        view?.run {
-            radioGroup = findViewById(R.id.radioGroup)
-            indicatorSeekBar = findViewById(R.id.indicatorSeekBar)
-        }
-    }
-
 
     override fun updateView() {
         super.updateView()

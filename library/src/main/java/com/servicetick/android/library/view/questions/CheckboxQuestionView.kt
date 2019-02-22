@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import androidx.annotation.Nullable
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.core.content.getSystemService
@@ -19,20 +18,15 @@ import com.servicetick.android.library.entities.SurveyQuestionOption
 internal class CheckboxQuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : QuestionView(context, attrs, defStyleAttr) {
 
-    private var checkboxContainer: FlexboxLayout? = null
+    private val checkboxContainer: FlexboxLayout? by lazy {
+        findViewById<FlexboxLayout>(R.id.checkboxContainer)
+    }
 
     @JvmOverloads
     internal constructor(context: Context, @Nullable attrs: AttributeSet? = null) : this(context, attrs, 0)
 
     init {
         postLayout(context.getSystemService<LayoutInflater>()?.inflate(R.layout.view_question_checkbox, this, true))
-    }
-
-    override fun postLayout(view: View?) {
-        super.postLayout(view)
-        view?.run {
-            checkboxContainer = findViewById(R.id.checkboxContainer)
-        }
     }
 
     override fun updateView() {

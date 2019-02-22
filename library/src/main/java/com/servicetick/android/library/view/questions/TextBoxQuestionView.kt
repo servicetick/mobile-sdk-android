@@ -7,7 +7,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.EditText
 import androidx.annotation.Nullable
 import androidx.annotation.StringRes
@@ -19,7 +18,9 @@ import com.servicetick.android.library.ktx.toDp
 internal class TextBoxQuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : QuestionView(context, attrs, defStyleAttr) {
 
-    private var textInputLayout: TextInputLayout? = null
+    private val textInputLayout: TextInputLayout? by lazy {
+        findViewById<TextInputLayout>(R.id.textBox)
+    }
 
     @JvmOverloads
     internal constructor(context: Context, @Nullable attrs: AttributeSet? = null) : this(context, attrs, 0)
@@ -68,13 +69,6 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
 
     override fun setupQuestionText() {
         textInputLayout?.hint = question?.question
-    }
-
-    override fun postLayout(view: View?) {
-        super.postLayout(view)
-        view?.run {
-            textInputLayout = findViewById(R.id.textBox)
-        }
     }
 
     override fun isValid(): Boolean {

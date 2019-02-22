@@ -19,20 +19,15 @@ import com.servicetick.android.library.entities.SurveyQuestionOption
 internal class DropdownQuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : QuestionView(context, attrs, defStyleAttr) {
 
-    private var spinner: AppCompatSpinner? = null
+    private val spinner: AppCompatSpinner? by lazy {
+        findViewById<AppCompatSpinner>(R.id.dropdown)
+    }
 
     @JvmOverloads
     internal constructor(context: Context, @Nullable attrs: AttributeSet? = null) : this(context, attrs, 0)
 
     init {
         postLayout(context.getSystemService<LayoutInflater>()?.inflate(R.layout.view_question_dropdown, this, true))
-    }
-
-    override fun postLayout(view: View?) {
-        super.postLayout(view)
-        view?.run {
-            spinner = findViewById(R.id.dropdown)
-        }
     }
 
     override fun updateView() {
@@ -70,7 +65,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
                 setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             }
 
-            onItemSelectedListener = object  : AdapterView.OnItemSelectedListener {
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                     clearError()
                 }
