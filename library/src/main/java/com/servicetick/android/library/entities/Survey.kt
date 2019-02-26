@@ -12,6 +12,7 @@ import com.servicetick.android.library.entities.db.BaseSurveyResponse
 import com.servicetick.android.library.fragment.SurveyFragment
 import com.servicetick.android.library.triggers.ManualTrigger
 import com.servicetick.android.library.triggers.Trigger
+import lilhermit.android.remotelogger.library.Log
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.get
 import java.util.*
@@ -68,6 +69,12 @@ class Survey internal constructor(val id: Long) : KoinComponent {
     }
 
     private fun startTrigger(trigger: Trigger): Fragment? {
+
+        // Until we add a trigger max_activation" count
+        if (getResponse().isComplete) {
+            Log.d("Skipping trigger ($id already answered)")
+            return null
+        }
 
         return when (trigger.presentation) {
             Trigger.Presentation.FRAGMENT -> SurveyFragment.create(id)
