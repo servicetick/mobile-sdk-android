@@ -65,6 +65,22 @@ class Survey internal constructor(val id: Long) : KoinComponent {
     @PublishedApi
     internal var response: MutableList<SurveyResponse> = mutableListOf()
 
+    @Ignore
+    private var isAnswerInjectionComplete = false
+
+    @delegate:Ignore
+    internal val renderablePages: List<SurveyPageTransition> by lazy {
+
+        val pageIds = questions.filter {
+            it.shouldRender()
+        }.distinctBy {
+            it.pageId
+        }.map {
+            it.pageId
+        }
+        if (pageIds.isNotEmpty()) pageTransitions.filter { pageIds.contains(it.sourcePageId) }.sortedBy { it.order } else emptyList()
+    }
+
     fun addTrigger(trigger: Trigger) {
     }
 
@@ -92,10 +108,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
-    @Ignore
-    private var isAnswerInjectionComplete = false
-
-    internal fun getPageCount(): Int = pageTransitions.size
+    internal fun getPageCount(): Int = renderablePages.size
 
     fun start(presentation: Trigger.Presentation = Trigger.Presentation.START_ACTIVITY): Fragment? = startTrigger(ManualTrigger(presentation))
 

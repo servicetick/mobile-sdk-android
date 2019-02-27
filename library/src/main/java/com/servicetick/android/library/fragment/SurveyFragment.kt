@@ -126,13 +126,11 @@ class SurveyFragment : BaseFragment() {
             return if (fragment !== null) {
                 fragment
             } else {
-                SurveyPageFragment.create(survey.pageTransitions[position])
+                SurveyPageFragment.create(survey.renderablePages[position])
             }
         }
 
-        override fun getCount(): Int {
-            return survey.pageTransitions.size
-        }
+        override fun getCount(): Int = survey.getPageCount()
     }
 
     companion object {
