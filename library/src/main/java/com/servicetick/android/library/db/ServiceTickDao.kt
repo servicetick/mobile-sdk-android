@@ -13,8 +13,9 @@ internal interface ServiceTickDao {
     @Transaction
     fun insert(survey: BaseSurvey) {
 
-        survey.pageTransitions.forEach { surveyPageTransition ->
+        survey.pageTransitions.forEachIndexed { index, surveyPageTransition ->
             surveyPageTransition.surveyId = survey.id
+            surveyPageTransition.order = index
         }
         survey.questionOptionActions.forEach { questionOptionAction ->
             questionOptionAction.surveyId = survey.id

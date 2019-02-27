@@ -30,11 +30,14 @@ internal class SurveyPageTransition() : KParcelable {
     @Ignore
     var conditions: List<Any> = emptyList()
 
+    var order: Int = -1
+
     constructor(parcel: Parcel) : this() {
         surveyId = parcel.readLong()
         sourcePageId = parcel.readLong()
         isCompletionPage = parcel.readBoolean()
         targetPageId = parcel.readLong()
+        order = parcel.readInt()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -42,10 +45,11 @@ internal class SurveyPageTransition() : KParcelable {
         parcel.writeLong(sourcePageId)
         parcel.writeBoolean(isCompletionPage)
         parcel.writeValue(targetPageId)
+        parcel.writeInt(order)
     }
 
     override fun toString(): String {
-        return "SurveyPageTransitions(surveyId=$surveyId, sourcePageId=$sourcePageId, isCompletionPage=$isCompletionPage, targetPageId=$targetPageId, conditions=$conditions)"
+        return "SurveyPageTransitions(surveyId=$surveyId, sourcePageId=$sourcePageId, isCompletionPage=$isCompletionPage, targetPageId=$targetPageId, conditions=$conditions, order=$order)"
     }
 
     companion object {
