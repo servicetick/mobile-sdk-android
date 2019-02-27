@@ -22,8 +22,15 @@ class SurveyPageFragment : BaseFragment() {
     private var questions: List<SurveyQuestion>? = null
     private val questionContainer: LinearLayout? by lazy { view?.findViewById<LinearLayout>(R.id.questionsContainer) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.fragment_survey_page, container, false) as ViewGroup
+
+    override fun onDestroyView() {
+        syncPageAnswers()
+        super.onDestroyView()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         pageTransition?.let { page ->
 
@@ -38,8 +45,6 @@ class SurveyPageFragment : BaseFragment() {
             })
         }
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.fragment_survey_page, container, false) as ViewGroup
 
     fun canAdvance(): Boolean {
         questionContainer?.forEach { view ->

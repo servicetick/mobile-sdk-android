@@ -1,12 +1,13 @@
 package com.servicetick.android.library.fragment
 
 import android.os.Bundle
+import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.servicetick.android.library.R
@@ -18,6 +19,7 @@ import kotlinx.android.synthetic.main.fragment_survey.*
 import kotlinx.android.synthetic.main.fragment_survey.view.*
 import lilhermit.android.remotelogger.library.Log
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+
 
 class SurveyFragment : BaseFragment() {
 
@@ -105,7 +107,7 @@ class SurveyFragment : BaseFragment() {
                     it?.run {
                         survey = this
                         survey.injectResponseAnswers()
-                        viewPager?.adapter = SurveyPageAdapter(fragmentManager)
+                        viewPager?.adapter = SurveyPageAdapter(childFragmentManager)
                         updateView()
                     }
                 })
@@ -116,19 +118,28 @@ class SurveyFragment : BaseFragment() {
     }
 
     private fun getAdapter(): SurveyPageAdapter = viewPager?.adapter as SurveyPageAdapter
-    private fun getCurrentFragment(): SurveyPageFragment = getAdapter().getItem(viewPager?.currentItem
-            ?: 0) as SurveyPageFragment
+    private fun getCurrentFragment(): SurveyPageFragment = getAdapter().getFragment(viewPager?.currentItem ?: 0)
 
-    internal inner class SurveyPageAdapter constructor(private var fm: FragmentManager?) : FragmentPagerAdapter(fm) {
+    internal inner class SurveyPageAdapter constructor(fm: FragmentManager?) : FragmentStatePagerAdapter(fm) {
+
+        private val pageFragments: SparseArray<SurveyPageFragment> = SparseArray()
 
         override fun getItem(position: Int): Fragment {
-            val fragment = fm?.findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + position)
-            return if (fragment !== null) {
-                fragment
-            } else {
-                SurveyPageFragment.create(survey.renderablePages[position])
-            }
+            return SurveyPageFragment.create(survey.renderablePages[position])
         }
+
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            val fragment = super.instantiateItem(container, position) as SurveyPageFragment
+            pageFragments.put(position, fragment)
+            return fragment
+        }
+
+        override fun destroyItem(container: ViewGroup, position: Int, fragment: Any) {
+            pageFragments.remove(position)
+            super.destroyItem(container, position, fragment)
+        }
+
+        fun getFragment(position: Int): SurveyPageFragment = if (pageFragments.size() >= position) pageFragments[position] else SurveyPageFragment()
 
         override fun getCount(): Int = survey.getPageCount()
     }
