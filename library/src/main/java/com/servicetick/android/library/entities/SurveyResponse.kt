@@ -1,9 +1,11 @@
 package com.servicetick.android.library.entities
 
+import android.os.Build
 import androidx.room.Ignore
 import androidx.room.Relation
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.servicetick.android.library.BuildConfig
 import com.servicetick.android.library.repository.SurveyRepository
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.get
@@ -44,7 +46,25 @@ internal class SurveyResponse : KoinComponent {
     internal var answers: MutableList<SurveyResponseAnswer> = mutableListOf()
 
     @Ignore
+    @Expose
+    @SerializedName("Custom")
+    private var customValues: Array<Custom> = arrayOf()
+
+    private class Custom(@Expose val Key: String, @Expose val Value: String)
+
+    @Ignore
     internal var answersMap: MutableMap<Long, SurveyResponseAnswer> = mutableMapOf()
+
+    internal fun buildCustomValues() {
+        customValues = arrayOf(
+                Custom("brand", Build.BRAND),
+                Custom("model", Build.MODEL),
+                Custom("manufacturer", Build.MANUFACTURER),
+                Custom("version_release", Build.VERSION.RELEASE),
+                Custom("library_version", BuildConfig.VERSION_NAME),
+                Custom("platform", "Android"),
+                Custom("version_sdk_int", Build.VERSION.SDK_INT.toString()))
+    }
 
     internal fun addAnswer(surveyResponseAnswer: SurveyResponseAnswer) {
         answers.add(surveyResponseAnswer)

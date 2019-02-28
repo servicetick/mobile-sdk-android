@@ -40,6 +40,7 @@ internal class SyncResponsesWorker(context: Context, params: WorkerParameters) :
             try {
 
                 surveyResponse.also {
+                    it.buildCustomValues()
                     it.clientAccountId = clientAccountId
                     it.accessKey = accessKey
                 }
