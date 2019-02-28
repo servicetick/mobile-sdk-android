@@ -6,6 +6,7 @@ import com.servicetick.android.library.db.ServiceTickDao
 import com.servicetick.android.library.entities.Survey
 import com.servicetick.android.library.entities.SurveyQuestion
 import com.servicetick.android.library.entities.SurveyResponse
+import com.servicetick.android.library.workers.SyncResponsesWorker
 
 
 internal class SurveyRepository constructor(private val serviceTickDao: ServiceTickDao, private val appExecutors: AppExecutors) {
@@ -16,6 +17,10 @@ internal class SurveyRepository constructor(private val serviceTickDao: ServiceT
     fun saveResponse(surveyResponse: SurveyResponse) {
         appExecutors.diskIO().execute {
             serviceTickDao.insert(surveyResponse)
+
+            if(surveyResponse.isComplete) {
+                SyncResponsesWorker.enqueue(true)
+            }
         }
     }
 }

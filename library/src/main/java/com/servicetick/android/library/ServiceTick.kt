@@ -6,6 +6,7 @@ import androidx.work.WorkInfo
 import com.servicetick.android.library.db.ServiceTickDao
 import com.servicetick.android.library.entities.Survey
 import com.servicetick.android.library.workers.SurveyInitWorker
+import com.servicetick.android.library.workers.SyncResponsesWorker
 import lilhermit.android.remotelogger.library.Log
 import org.koin.android.logger.AndroidLogger
 import org.koin.core.Koin
@@ -63,6 +64,8 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
 
                                     // Only enqueues one as ExistingPeriodicWorkPolicy.KEEP
                                     SurveyInitWorker.enqueueRefreshAll()
+
+                                    SyncResponsesWorker.enqueue()
                                 }
                             })
                         }

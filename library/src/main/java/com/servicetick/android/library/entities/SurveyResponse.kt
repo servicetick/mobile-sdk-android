@@ -27,6 +27,8 @@ internal class SurveyResponse : KoinComponent {
     internal var surveyId: Long = 0
 
     @PublishedApi
+    @Expose
+    @SerializedName("IVRTRansactionComplete")
     internal var isComplete: Boolean = false
 
     @PublishedApi
@@ -35,6 +37,8 @@ internal class SurveyResponse : KoinComponent {
     @PublishedApi
     internal var id: Long = 0
 
+    @Expose
+    @SerializedName("Answers")
     @PublishedApi
     @Relation(parentColumn = "id", entityColumn = "surveyResponseId")
     internal var answers: MutableList<SurveyResponseAnswer> = mutableListOf()

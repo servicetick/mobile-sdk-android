@@ -76,7 +76,7 @@ internal interface ServiceTickDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun update(entity: BaseSurvey?)
 
-    @Delete()
+    @Delete
     fun delete(entity: BaseSurvey?)
 
     @Transaction
@@ -88,8 +88,8 @@ internal interface ServiceTickDao {
     fun getSurveyAsLiveData(id: Long): LiveData<Survey?>
 
     @Transaction
-    @Query("SELECT * FROM survey_responses WHERE survey_responses.surveyId=:surveyId")
-    fun getSurveyResponseAsLiveData(surveyId: Long): LiveData<SurveyResponse?>
+    @Query("SELECT * FROM survey_responses WHERE syncStamp is NULL AND isComplete = 1")
+    fun getSyncableSurveyResponse(): List<SurveyResponse?>
 
     @Transaction
     @Query("SELECT * FROM survey_responses WHERE survey_responses.surveyId=:surveyId")
@@ -105,4 +105,7 @@ internal interface ServiceTickDao {
 
     @Query("DELETE from survey_questions where surveyId=:surveyId AND id NOT IN(:notInQuestionIds)")
     fun purgeQuestions(surveyId: Long, notInQuestionIds: Array<Long>)
+
+    @Query("UPDATE survey_responses set syncStamp = datetime('now') where id = :surveyResponseId")
+    fun markResponseAsSynced(surveyResponseId : Long)
 }
