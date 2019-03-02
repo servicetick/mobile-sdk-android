@@ -33,9 +33,9 @@ class ServiceTickInitialiserProvider : ContentProvider() {
             } catch (exception: Exception) {
             }
 
+            startKoin(this, listOf(libraryModule), logger = EmptyLogger())
             ServiceTick.internalInit(this)
 
-            startKoin(this, listOf(libraryModule), logger = EmptyLogger())
         }
         return true
     }
