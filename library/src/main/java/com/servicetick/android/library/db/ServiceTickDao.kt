@@ -6,6 +6,7 @@ import com.servicetick.android.library.entities.*
 import com.servicetick.android.library.entities.db.BaseSurvey
 import com.servicetick.android.library.entities.db.BaseSurveyQuestion
 import com.servicetick.android.library.entities.db.BaseSurveyResponse
+import com.servicetick.android.library.entities.db.Statistic
 
 @Dao
 internal interface ServiceTickDao {
@@ -107,5 +108,14 @@ internal interface ServiceTickDao {
     fun purgeQuestions(surveyId: Long, notInQuestionIds: Array<Long>)
 
     @Query("UPDATE survey_responses set syncStamp = datetime('now') where id = :surveyResponseId")
-    fun markResponseAsSynced(surveyResponseId : Long)
+    fun markResponseAsSynced(surveyResponseId: Long)
+
+    @Query("SELECT * FROM statistics WHERE `key` = :key")
+    fun getStatistic(key: String): Statistic?
+
+    @Query("SELECT * FROM statistics")
+    fun getStatistics(): List<Statistic>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun setStatistic(statistic: Statistic)
 }

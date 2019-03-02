@@ -11,6 +11,7 @@ import com.servicetick.android.library.entities.SurveyResponseAnswer
 import com.servicetick.android.library.entities.db.BaseSurvey
 import com.servicetick.android.library.entities.db.BaseSurveyQuestion
 import com.servicetick.android.library.entities.db.BaseSurveyResponse
+import com.servicetick.android.library.entities.db.Statistic
 
 
 @Database(entities = [
@@ -20,7 +21,8 @@ import com.servicetick.android.library.entities.db.BaseSurveyResponse
     BaseSurveyQuestion::class,
     SurveyQuestionOption::class,
     BaseSurveyResponse::class,
-    SurveyResponseAnswer::class
+    SurveyResponseAnswer::class,
+    Statistic::class
 ], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 internal abstract class ServiceTickDatabase : RoomDatabase() {

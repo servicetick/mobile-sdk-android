@@ -1,6 +1,9 @@
 package com.servicetick.android.library
 
+import android.app.Activity
+import android.app.Application
 import android.content.Context
+import android.os.Bundle
 import androidx.lifecycle.*
 import androidx.work.WorkInfo
 import com.servicetick.android.library.db.ServiceTickDao
@@ -29,11 +32,28 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
     internal var surveyAccessKey: String? = null
     internal var importerAccessKey: String? = null
     private val serviceTickDao: ServiceTickDao by inject()
+    private val statistics = StatisticsHelper()
 
     init {
         lifecycleRegistry.markState(Lifecycle.State.STARTED)
         singleton = this
         setDebug(config["debug"] as Boolean)
+
+        (context.applicationContext as Application).registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityPaused(activity: Activity?) {
+                statistics.removeActivity(activity)
+            }
+
+            override fun onActivityResumed(activity: Activity?) {
+                statistics.addActivity(activity)
+            }
+
+            override fun onActivityStarted(activity: Activity?) {}
+            override fun onActivityDestroyed(activity: Activity?) {}
+            override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {}
+            override fun onActivityStopped(activity: Activity?) {}
+            override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {}
+        })
     }
 
     fun addSurvey(surveyBuilder: SurveyBuilder): LiveData<Survey.State> {
