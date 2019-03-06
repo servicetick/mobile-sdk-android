@@ -65,6 +65,8 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
 
         if (!surveyMap.contains(survey.id)) {
 
+            surveyMap[survey.id] = survey
+
             SurveyInitWorker.enqueue(survey, this, object : Observer<WorkInfo> {
 
                 private var previousState: Survey.State? = null
@@ -98,7 +100,7 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
     }
 
     fun getSurvey(id: Long): Survey? {
-        return surveyMap[id]
+        return surveyMap.filter { it.value.state == Survey.State.INITIALISED }[id]
     }
 
     private fun actionConfig(configPair: Pair<String, Any>) {

@@ -28,17 +28,17 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
         val id = inputData.getLong(KEY_ID, 0L)
         if (id != 0L) {
 
-            val currentSurvey = serviceTickDao.getSurvey(id)
-            if (currentSurvey == null || currentSurvey.isRefreshDue || serviceTick.getForceRefresh()) {
+            val databaseSurvey = serviceTickDao.getSurvey(id)
+            if (databaseSurvey == null || databaseSurvey.isRefreshDue || serviceTick.getForceRefresh()) {
 
                 when {
-                    currentSurvey == null -> Log.d("Refreshing survey: $id Reason: not-in-db")
+                    databaseSurvey == null -> Log.d("Refreshing survey: $id Reason: not-in-db")
                     serviceTick.getForceRefresh() -> Log.d("Refreshing survey: $id Reason: force")
                     else -> Log.d("Refreshing survey: $id Reason: due")
                 }
 
-                makeApiCall(id)?.let { newSurvey ->
-                    updateSurvey(newSurvey, currentSurvey)
+                makeApiCall(id)?.let { apiSurvey ->
+                    updateSurvey(apiSurvey, databaseSurvey)
                     return ListenableWorker.Result.success()
 
                 } ?: run {
@@ -52,19 +52,19 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
         } else {
 
             // Refresh all surveys
-            serviceTickDao.getSurveys().forEach { survey ->
-                if (serviceTick.getForceRefresh() || survey.isRefreshDue) {
+            serviceTickDao.getSurveys().forEach { databaseSurvey ->
+                if (serviceTick.getForceRefresh() || databaseSurvey.isRefreshDue) {
 
                     when {
-                        serviceTick.getForceRefresh() -> Log.d("Refreshing survey: ${survey.id} Reason: force")
-                        else -> Log.d("Refreshing survey: ${survey.id} Reason: due")
+                        serviceTick.getForceRefresh() -> Log.d("Refreshing survey: ${databaseSurvey.id} Reason: force")
+                        else -> Log.d("Refreshing survey: ${databaseSurvey.id} Reason: due")
                     }
 
-                    makeApiCall(survey.id)?.let { newSurvey ->
-                        updateSurvey(newSurvey, survey)
+                    makeApiCall(databaseSurvey.id)?.let { apiSurvey ->
+                        updateSurvey(apiSurvey, databaseSurvey)
                     }
                 } else {
-                    Log.d("No refresh required for survey: ${survey.id}")
+                    Log.d("No refresh required for survey: ${databaseSurvey.id}")
                 }
             }
 
@@ -92,37 +92,24 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
         return null
     }
 
-    private fun updateSurvey(newSurvey: BaseSurvey, oldSurvey: Survey?) {
+    private fun updateSurvey(apiSurvey: BaseSurvey, databaseSurvey: Survey?) {
 
-        // Save any values from the oldSurvey
-        oldSurvey?.run {
-            newSurvey.refreshInterval = refreshInterval
-        } ?: run {
-            newSurvey.refreshInterval = inputData.getLong(KEY_REFRESH_INTERVAL, Survey.DEFAULT_REFRESH_INTERVAL)
-        }
-        newSurvey.state = when {
-            !newSurvey.enabled -> {
-                Survey.State.DISABLED
-            }
-            oldSurvey == null || newSurvey.enabled -> {
-                Survey.State.INITIALISED
-            }
-            else -> {
-                oldSurvey.state
-            }
-        }
+        val newSurvey = serviceTick.getSurveyByState(apiSurvey.id)
 
-        serviceTickDao.insert(newSurvey)
+        // Save some values
+        apiSurvey.refreshInterval = newSurvey?.refreshInterval ?: Survey.DEFAULT_REFRESH_INTERVAL
+        apiSurvey.state = if (!apiSurvey.enabled) Survey.State.DISABLED else Survey.State.INITIALISED
+
+        serviceTickDao.insert(apiSurvey)
 
         //Purge changed or removed questions
-        serviceTickDao.purgeQuestions(newSurvey.id, newSurvey.questions.mapNotNull {
+        serviceTickDao.purgeQuestions(apiSurvey.id, apiSurvey.questions.mapNotNull {
             it.id
         }.toTypedArray())
     }
 
     companion object {
         private const val KEY_ID = "id"
-        private const val KEY_REFRESH_INTERVAL = "refresh_interval"
 
         internal fun enqueue(survey: Survey, lifecycleOwner: LifecycleOwner? = null, observer: Observer<WorkInfo>? = null) {
             val constraints = Constraints.Builder()
@@ -133,7 +120,6 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
                     .setConstraints(constraints)
                     .setInputData(Data.Builder()
                             .putLong(KEY_ID, survey.id)
-                            .putLong(KEY_REFRESH_INTERVAL, survey.refreshInterval)
                             .build())
                     .build()
 
