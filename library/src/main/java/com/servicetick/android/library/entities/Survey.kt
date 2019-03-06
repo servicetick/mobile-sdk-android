@@ -9,9 +9,9 @@ import com.servicetick.android.library.ServiceTick
 import com.servicetick.android.library.activity.SurveyActivity
 import com.servicetick.android.library.entities.db.BaseSurveyQuestion
 import com.servicetick.android.library.entities.db.BaseSurveyResponse
+import com.servicetick.android.library.entities.triggers.ManualTrigger
+import com.servicetick.android.library.entities.triggers.Trigger
 import com.servicetick.android.library.fragment.SurveyFragment
-import com.servicetick.android.library.triggers.ManualTrigger
-import com.servicetick.android.library.triggers.Trigger
 import lilhermit.android.remotelogger.library.Log
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.get
@@ -58,7 +58,8 @@ class Survey internal constructor(val id: Long) : KoinComponent {
     @PublishedApi
     internal var questions: MutableList<SurveyQuestion> = mutableListOf()
 
-    @Ignore
+    @PublishedApi
+    @Relation(parentColumn = "id", entityColumn = "surveyId", entity = Trigger::class)
     internal var triggers: MutableList<Trigger> = mutableListOf()
 
     @Relation(parentColumn = "id", entityColumn = "surveyId", entity = BaseSurveyResponse::class)
@@ -82,6 +83,10 @@ class Survey internal constructor(val id: Long) : KoinComponent {
     }
 
     fun addTrigger(trigger: Trigger) {
+        if (triggers.none { it.tag == trigger.tag }) {
+            trigger.surveyId = id
+            triggers.add(trigger)
+        }
     }
 
     private fun startTrigger(trigger: Trigger): Fragment? {

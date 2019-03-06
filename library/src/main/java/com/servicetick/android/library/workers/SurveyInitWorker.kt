@@ -39,6 +39,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
 
                 makeApiCall(id)?.let { apiSurvey ->
                     updateSurvey(apiSurvey, databaseSurvey)
+                    updateSurveyTriggersOnly(apiSurvey.id, databaseSurvey)
                     return ListenableWorker.Result.success()
 
                 } ?: run {
@@ -46,6 +47,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
                 }
 
             } else {
+                updateSurveyTriggersOnly(databaseSurvey.id, databaseSurvey)
                 return ListenableWorker.Result.success()
             }
 
@@ -90,6 +92,43 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
         }
 
         return null
+    }
+
+    private fun updateSurveyTriggersOnly(id: Long, databaseSurvey: Survey?) {
+
+        val newSurvey = serviceTick.getSurveyByState(id)
+
+        if (databaseSurvey != null) {
+
+            if (newSurvey?.triggers?.isEmpty() == true) {
+                databaseSurvey.triggers.forEach { trigger ->
+                    trigger.active = false
+
+                    if (trigger.canStore()) {
+                        serviceTickDao.insert(trigger)
+                    }
+                }
+            } else {
+                newSurvey?.triggers?.forEachIndexed { index, trigger ->
+
+                    if (trigger.canStore()) {
+                        trigger.data = databaseSurvey.triggers.firstOrNull {
+                            it.tag == trigger.tag
+                        }?.data ?: hashMapOf()
+
+                        serviceTickDao.insert(trigger)
+                    }
+                }
+
+                // Disable the triggers not currently added
+                serviceTickDao.disableTriggers(id, newSurvey?.triggers?.map { it.tag } ?: emptyList())
+            }
+
+        } else {
+            newSurvey?.let { survey ->
+                serviceTickDao.insert(survey.triggers)
+            }
+        }
     }
 
     private fun updateSurvey(apiSurvey: BaseSurvey, databaseSurvey: Survey?) {

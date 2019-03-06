@@ -7,6 +7,7 @@ import com.servicetick.android.library.entities.db.BaseSurvey
 import com.servicetick.android.library.entities.db.BaseSurveyQuestion
 import com.servicetick.android.library.entities.db.BaseSurveyResponse
 import com.servicetick.android.library.entities.db.Statistic
+import com.servicetick.android.library.entities.triggers.Trigger
 
 @Dao
 internal interface ServiceTickDao {
@@ -52,6 +53,12 @@ internal interface ServiceTickDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSurvey(survey: BaseSurvey)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(trigger: Trigger)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(trigger: List<Trigger>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSurveyPageTransitions(entities: List<SurveyPageTransition>)
@@ -118,4 +125,7 @@ internal interface ServiceTickDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun setStatistic(statistic: Statistic)
+
+    @Query("UPDATE triggers set active = 0 where surveyId = :surveyId AND tag NOT IN (:tagNotInList)")
+    fun disableTriggers(surveyId: Long, tagNotInList: List<String>)
 }

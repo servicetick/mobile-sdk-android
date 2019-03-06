@@ -1,0 +1,36 @@
+package com.servicetick.android.library.entities.triggers
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "triggers")
+open class Trigger internal constructor(val presentation: Presentation = Presentation.START_ACTIVITY, @PrimaryKey val tag: String, var surveyId: Long) {
+
+    @PublishedApi
+    internal var type: String = javaClass.simpleName
+    @PublishedApi
+    internal var active: Boolean = true
+    @PublishedApi
+    internal var config: HashMap<String, Any> = hashMapOf()
+    @PublishedApi
+    internal var data: HashMap<String, Any> = hashMapOf()
+
+    internal fun canStore(): Boolean = javaClass.kotlin != ManualTrigger::class
+
+    override fun toString(): String {
+        return "Trigger(presentation=$presentation, tag='$tag', surveyId=$surveyId, type='$type', active=$active, config=$config, data=$data)"
+    }
+
+    enum class Presentation {
+
+        /**
+         * This mode starts an activity with the Survey in
+         */
+        START_ACTIVITY,
+
+        /**
+         * This mode returns you a fragment either directly or via a callbacl
+         */
+        FRAGMENT
+    }
+}

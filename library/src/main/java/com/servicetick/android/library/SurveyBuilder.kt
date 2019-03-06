@@ -1,6 +1,7 @@
 package com.servicetick.android.library
 
 import com.servicetick.android.library.entities.Survey
+import com.servicetick.android.library.entities.triggers.Trigger
 import java.util.concurrent.TimeUnit
 
 class SurveyBuilder(surveyId: Long) {
@@ -14,6 +15,11 @@ class SurveyBuilder(surveyId: Long) {
 
     fun setRefreshInterval(millis: Long): SurveyBuilder {
         survey.refreshInterval = millis
+        return this
+    }
+
+    fun addTrigger(trigger: Trigger): SurveyBuilder {
+        survey.addTrigger(trigger)
         return this
     }
 

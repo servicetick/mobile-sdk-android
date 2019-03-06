@@ -103,6 +103,17 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
         return surveyMap.filter { it.value.state == Survey.State.INITIALISED }[id]
     }
 
+    /**
+     * Get a survey based on state (null = any state)
+     */
+    internal fun getSurveyByState(id: Long, state: Survey.State? = null): Survey? {
+        return state?.let { surveyState ->
+            surveyMap.filter { it.value.state == surveyState }[id]
+        } ?: let {
+            surveyMap[id]
+        }
+    }
+
     private fun actionConfig(configPair: Pair<String, Any>) {
         when (configPair.first) {
             "debug" -> setDebug(configPair.second as Boolean)
