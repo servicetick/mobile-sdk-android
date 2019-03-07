@@ -22,7 +22,7 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
 
     internal var weakReference = WeakReference<Context>(context.applicationContext)
     private var lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
-    private val surveyMap: MutableMap<Long, Survey> = mutableMapOf()
+    internal val surveyMap: MutableMap<Long, Survey> = mutableMapOf()
     private val config: MutableMap<String, Any> = mutableMapOf(
             "base_url" to "https://api.servicetick.com/v1/",
             "force_refresh" to false,
@@ -73,24 +73,17 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
 
                 override fun onChanged(workStatus: WorkInfo?) {
                     if (workStatus?.state == WorkInfo.State.SUCCEEDED) {
-                        if (survey.id != 0L) {
-                            serviceTickDao.getSurveyAsLiveData(survey.id).observe(this@ServiceTick, Observer {
+                        val newState = SurveyInitWorker.getOutputDataState(workStatus)
 
-                                it?.let { fullSurvey ->
-                                    surveyMap[fullSurvey.id] = fullSurvey
-
-                                    if (previousState != fullSurvey.state) {
-                                        liveData.postValue(fullSurvey.state)
-                                        previousState = fullSurvey.state
-                                    }
-
-                                    // Only enqueues one as ExistingPeriodicWorkPolicy.KEEP
-                                    SurveyInitWorker.enqueueRefreshAll()
-
-                                    SyncResponsesWorker.enqueue()
-                                }
-                            })
+                        if (previousState != newState) {
+                            liveData.postValue(newState)
+                            previousState = newState
                         }
+
+                        // Only enqueues one as ExistingPeriodicWorkPolicy.KEEP
+                        SurveyInitWorker.enqueueRefreshAll()
+
+                        SyncResponsesWorker.enqueue()
                     }
                 }
 

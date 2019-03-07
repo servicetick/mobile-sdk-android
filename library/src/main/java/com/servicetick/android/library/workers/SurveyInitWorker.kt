@@ -40,7 +40,15 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
                 makeApiCall(id)?.let { apiSurvey ->
                     updateSurvey(apiSurvey, databaseSurvey)
                     updateSurveyTriggersOnly(apiSurvey.id, databaseSurvey)
-                    return ListenableWorker.Result.success()
+
+                    // Because we can't use the apiSurvey type of BaseSurvey, it's a little messy but we are in a thread
+                    // and it's cleaner than creating a clone constructor and converting (We would have to convert the
+                    // List<BaseSurveyQuestion> to List<SurveyQuestion> too!
+                    serviceTickDao.getSurvey(apiSurvey.id)?.let { survey ->
+                        serviceTick.surveyMap[survey.id] = survey
+                    }
+
+                    return ListenableWorker.Result.success(putOutputDataState(apiSurvey.state))
 
                 } ?: run {
                     return ListenableWorker.Result.retry()
@@ -48,7 +56,9 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
 
             } else {
                 updateSurveyTriggersOnly(databaseSurvey.id, databaseSurvey)
-                return ListenableWorker.Result.success()
+                serviceTick.surveyMap[databaseSurvey.id] = databaseSurvey
+
+                return ListenableWorker.Result.success(putOutputDataState(databaseSurvey.state))
             }
 
         } else {
@@ -149,6 +159,12 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
 
     companion object {
         private const val KEY_ID = "id"
+        private const val DATA_STATE = "state"
+
+        internal fun getOutputDataState(workInfo: WorkInfo) = Survey.State.valueOf(workInfo.outputData.getString(DATA_STATE)
+                ?: Survey.State.ENQUEUED.name)
+
+        internal fun putOutputDataState(state: Survey.State) = Data.Builder().putString(DATA_STATE, state.name).build()
 
         internal fun enqueue(survey: Survey, lifecycleOwner: LifecycleOwner? = null, observer: Observer<WorkInfo>? = null) {
             val constraints = Constraints.Builder()
