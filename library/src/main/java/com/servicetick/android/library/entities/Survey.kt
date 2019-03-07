@@ -118,7 +118,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
     fun start(presentation: Trigger.Presentation = Trigger.Presentation.START_ACTIVITY): Fragment? = startTrigger(ManualTrigger(presentation))
 
     override fun toString(): String {
-        return "Survey(id=$id, title=$title, type=$type, state=$state, lastUpdated=${lastUpdated?.time.toString()}, refreshInterval=$refreshInterval)\n   pageTransitions=$pageTransitions\n   questionOptionActions=$questionOptionActions\n   questions=$questions\n"
+        return "Survey(id=$id, title=$title, type=$type, state=$state, lastUpdated=${lastUpdated?.time.toString()}, refreshInterval=$refreshInterval)\n   pageTransitions=$pageTransitions\n   questionOptionActions=$questionOptionActions\n   questions=$questions\n   triggers=$triggers\n"
     }
 
     internal fun injectResponseAnswers() {

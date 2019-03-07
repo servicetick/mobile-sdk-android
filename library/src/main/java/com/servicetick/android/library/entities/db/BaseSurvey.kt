@@ -43,21 +43,7 @@ internal class BaseSurvey internal constructor(@Expose @PrimaryKey @SerializedNa
     var refreshInterval: Long = Survey.DEFAULT_REFRESH_INTERVAL
     var state = Survey.State.ENQUEUED
 
-    @Ignore
-    var isRefreshDue: Boolean = false
-        get() {
-            val cal = Calendar.getInstance()
-            cal.timeInMillis = refreshInterval
-
-//            Log.v("now + update ${cal.time}")
-//            Log.v("lastUpdated ${lastUpdated?.time}")
-
-            return cal.before(lastUpdated)
-        }
-
     override fun toString(): String {
         return "BaseSurvey(id=$id, title=$title, type=$type, enabled=$enabled, lastUpdated=${lastUpdated?.time.toString()}, refreshInterval=$refreshInterval)\n   pageTransitions=$pageTransitions\n   questionOptionActions=$questionOptionActions\n   questions=$questions\n"
     }
-
-
 }
