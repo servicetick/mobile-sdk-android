@@ -26,7 +26,10 @@ class ApplicationRunTimeTrigger(tag: String, runTime: Long, presentation: Presen
 
     override fun updateData(data: HashMap<String, Any>?) {
         data?.let {
-            updateApplicationRunTime(data[DATA_KEY_RUN_TIME] as Long)
+            val runTime = data[DATA_KEY_RUN_TIME]
+            if (runTime is Long) {
+                updateApplicationRunTime(runTime)
+            }
         }
     }
 
