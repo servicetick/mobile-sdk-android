@@ -2,7 +2,7 @@ package com.servicetick.android.library.entities.triggers
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.servicetick.android.library.workers.SaveTriggerDataWorker
+import com.servicetick.android.library.workers.SaveTriggerWorker
 import lilhermit.android.remotelogger.library.Log
 
 @Entity(tableName = "triggers")
@@ -51,6 +51,7 @@ open class Trigger internal constructor(val presentation: Presentation = Present
             if (active && !fired && shouldFire) {
                 // TODO Add fire mechanism callback
                 fired = true
+                scheduleSave()
             } else {
                 if (fired) {
                     Log.d("Trigger (tag:$tag) already fired")
@@ -64,7 +65,7 @@ open class Trigger internal constructor(val presentation: Presentation = Present
     }
 
     protected fun scheduleSave() {
-        SaveTriggerDataWorker.enqueue(this)
+        SaveTriggerWorker.enqueue(this)
     }
 
     companion object {

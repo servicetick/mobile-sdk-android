@@ -129,6 +129,6 @@ internal interface ServiceTickDao {
     @Query("UPDATE triggers set active = 0 where surveyId = :surveyId AND tag NOT IN (:tagNotInList)")
     fun disableTriggers(surveyId: Long, tagNotInList: List<String>)
 
-    @Query("UPDATE triggers set data = :data where tag = :tag")
-    fun updateTriggerData(data: HashMap<String, Any>, tag: String)
+    @Query("UPDATE triggers set data = :data, fired = :fired where tag = :tag")
+    fun updateTrigger(tag: String, data: HashMap<String, Any>, fired : Boolean)
 }

@@ -123,10 +123,12 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
                 newSurvey?.triggers?.forEach { trigger ->
 
                     if (trigger.canStore()) {
-                        trigger.updateData(databaseSurvey.triggers.firstOrNull {
+                        databaseSurvey.triggers.firstOrNull {
                             it.tag == trigger.tag
-                        }?.data)
-
+                        }?.let { databaseTrigger ->
+                            trigger.updateData(databaseTrigger.data)
+                            trigger.fired = databaseTrigger.fired
+                        }
                         serviceTickDao.insert(trigger)
                     }
                 }
