@@ -35,15 +35,10 @@ open class Trigger internal constructor(val presentation: Presentation = Present
         return "Trigger(presentation=$presentation, tag='$tag', surveyId=$surveyId, type='$type', active=$active, config=$config, data=$data)"
     }
 
-    internal open fun updateApplicationRunCount() {
-        scheduleSave()
-    }
+    internal open fun updateApplicationRunCount(count : Int = 1) = Unit
+    internal open fun updateApplicationRunTime(time: Long) = Unit
 
-    internal open fun updateApplicationRunTime(time: Long) {
-        scheduleSave()
-    }
-
-    private fun scheduleSave() {
+    protected fun scheduleSave() {
         SaveTriggerDataWorker.enqueue(this)
     }
 

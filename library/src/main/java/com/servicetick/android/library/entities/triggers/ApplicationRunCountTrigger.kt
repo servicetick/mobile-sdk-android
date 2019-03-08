@@ -19,9 +19,9 @@ class ApplicationRunCountTrigger(tag: String, runCount: Int, presentation: Prese
         config[CONFIG_KEY_RUN_COUNT] = runCount
     }
 
-    override fun updateApplicationRunCount() {
-        applicationRunCount++
-        super.updateApplicationRunCount()
+    override fun updateApplicationRunCount(count: Int) {
+        applicationRunCount += count
+        scheduleSave()
     }
 
     companion object {

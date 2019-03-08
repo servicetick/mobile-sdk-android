@@ -21,7 +21,7 @@ class ApplicationRunTimeTrigger(tag: String, runTime: Long, presentation: Presen
 
     override fun updateApplicationRunTime(time: Long) {
         applicationRunTime += time
-        super.updateApplicationRunTime(time)
+        scheduleSave()
     }
 
     companion object {
