@@ -34,7 +34,7 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
     private val serviceTickDao: ServiceTickDao by inject()
     private val statistics = TriggerHelper(object : TriggerHelper.TriggerHelperCallback {
         override fun onApplicationRun() {
-            surveyMap.values.forEach {survey ->
+            surveyMap.values.forEach { survey ->
                 survey.triggers.forEach { trigger ->
                     trigger.updateApplicationRunCount()
                 }
@@ -42,7 +42,7 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
         }
 
         override fun onApplicationRunTimeUpdate(time: Long) {
-            surveyMap.values.forEach {survey ->
+            surveyMap.values.forEach { survey ->
                 survey.triggers.forEach { trigger ->
                     trigger.updateApplicationRunTime(time)
                 }
@@ -77,9 +77,10 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
         val liveData = MutableLiveData<Survey.State>()
 
         val survey = surveyBuilder.build()
-        liveData.postValue(survey.state)
 
         if (!surveyMap.contains(survey.id)) {
+
+            liveData.postValue(survey.state)
 
             surveyMap[survey.id] = survey
 
