@@ -37,6 +37,7 @@ open class Trigger internal constructor(val presentation: Presentation = Present
 
     internal open fun updateApplicationRunCount(count : Int = 1) = Unit
     internal open fun updateApplicationRunTime(time: Long) = Unit
+    internal open fun updateData(data : HashMap<String, Any>?) = Unit
 
     protected fun scheduleSave() {
         SaveTriggerDataWorker.enqueue(this)

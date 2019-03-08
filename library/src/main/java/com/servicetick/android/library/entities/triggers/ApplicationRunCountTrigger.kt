@@ -24,6 +24,12 @@ class ApplicationRunCountTrigger(tag: String, runCount: Int, presentation: Prese
         scheduleSave()
     }
 
+    override fun updateData(data: HashMap<String, Any>?) {
+        data?.let {
+            updateApplicationRunCount(data[DATA_KEY_RUN_COUNT] as Int)
+        }
+    }
+
     companion object {
         private const val CONFIG_KEY_RUN_COUNT = "run_count"
         private const val DATA_KEY_RUN_COUNT = "run_count"

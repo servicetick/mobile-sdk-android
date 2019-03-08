@@ -24,6 +24,12 @@ class ApplicationRunTimeTrigger(tag: String, runTime: Long, presentation: Presen
         scheduleSave()
     }
 
+    override fun updateData(data: HashMap<String, Any>?) {
+        data?.let {
+            updateApplicationRunTime(data[DATA_KEY_RUN_TIME] as Long)
+        }
+    }
+
     companion object {
         private const val CONFIG_KEY_RUN_TIME = "run_time"
         private const val DATA_KEY_RUN_TIME = "run_time"
