@@ -5,9 +5,9 @@ import android.content.Intent
 import org.koin.standalone.KoinComponent
 import kotlin.collections.set
 
-internal class StatisticsHelper(private val listener: StatisticsCallback) : KoinComponent {
+internal class TriggerHelper(private val listener: TriggerHelperCallback) : KoinComponent {
 
-    internal var activityCount: Int = 0
+    private var activityCount: Int = 0
     private var activityStartTimes = HashMap<String, Long>()
 
     internal fun addActivity(activity: Activity?) {
@@ -49,7 +49,7 @@ internal class StatisticsHelper(private val listener: StatisticsCallback) : Koin
 
     private fun getCurrentTime() = System.currentTimeMillis() / 1000
 
-    internal interface StatisticsCallback {
+    internal interface TriggerHelperCallback {
 
         fun onApplicationRun()
         fun onApplicationRunTimeUpdate(time: Long)

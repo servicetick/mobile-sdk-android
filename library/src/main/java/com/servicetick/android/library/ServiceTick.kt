@@ -32,7 +32,7 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
     internal var surveyAccessKey: String? = null
     internal var importerAccessKey: String? = null
     private val serviceTickDao: ServiceTickDao by inject()
-    private val statistics = StatisticsHelper(object : StatisticsHelper.StatisticsCallback {
+    private val statistics = TriggerHelper(object : TriggerHelper.TriggerHelperCallback {
         override fun onApplicationRun() {
             surveyMap.values.forEach {survey ->
                 survey.triggers.forEach { trigger ->
