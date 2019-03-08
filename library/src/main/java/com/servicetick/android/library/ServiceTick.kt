@@ -32,7 +32,23 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
     internal var surveyAccessKey: String? = null
     internal var importerAccessKey: String? = null
     private val serviceTickDao: ServiceTickDao by inject()
-    private val statistics = StatisticsHelper()
+    private val statistics = StatisticsHelper(object : StatisticsHelper.StatisticsCallback {
+        override fun onApplicationRun() {
+            surveyMap.values.forEach {survey ->
+                survey.triggers.forEach { trigger ->
+                    trigger.updateApplicationRunCount()
+                }
+            }
+        }
+
+        override fun onApplicationRunTimeUpdate(time: Long) {
+            surveyMap.values.forEach {survey ->
+                survey.triggers.forEach { trigger ->
+                    trigger.updateApplicationRunTime(time)
+                }
+            }
+        }
+    })
 
     init {
         lifecycleRegistry.markState(Lifecycle.State.STARTED)

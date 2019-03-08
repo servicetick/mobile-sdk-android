@@ -2,31 +2,13 @@ package com.servicetick.android.library
 
 import android.app.Activity
 import android.content.Intent
-import com.servicetick.android.library.db.ServiceTickDao
-import com.servicetick.android.library.workers.SaveStatisticsWorker
 import org.koin.standalone.KoinComponent
-import org.koin.standalone.inject
 import kotlin.collections.set
 
-internal class StatisticsHelper : KoinComponent {
+internal class StatisticsHelper(private val listener: StatisticsCallback) : KoinComponent {
 
     internal var activityCount: Int = 0
-    private var applicationRunCount: Int = 0
-    private var applicationTime: Long = 0
     private var activityStartTimes = HashMap<String, Long>()
-    private val serviceTickDao: ServiceTickDao by inject()
-    private val appExecutors: AppExecutors by inject()
-
-    init {
-        appExecutors.generalBackground().execute {
-            serviceTickDao.getStatistics().forEach {
-                when (it.key) {
-                    "applicationRunTime" -> applicationTime += it.value.toLong()
-                    "applicationRunCount" -> applicationRunCount += it.value.toInt()
-                }
-            }
-        }
-    }
 
     internal fun addActivity(activity: Activity?) {
 
@@ -58,21 +40,18 @@ internal class StatisticsHelper : KoinComponent {
 
     private fun incrementApplicationTime(value: Long) {
 
-        applicationTime += value
-        scheduleSave()
+        listener.onApplicationRunTimeUpdate(value)
     }
 
     private fun incrementApplicationRunCount() {
-        applicationRunCount++
-        scheduleSave()
-    }
-
-    private fun scheduleSave() {
-        SaveStatisticsWorker.enqueue(hashMapOf(
-                "applicationRunCount" to applicationRunCount,
-                "applicationRunTime" to applicationTime
-        ))
+        listener.onApplicationRun()
     }
 
     private fun getCurrentTime() = System.currentTimeMillis() / 1000
+
+    internal interface StatisticsCallback {
+
+        fun onApplicationRun()
+        fun onApplicationRunTimeUpdate(time: Long)
+    }
 }
