@@ -14,6 +14,7 @@ open class Trigger internal constructor(val presentation: Presentation = Present
     protected fun clone(trigger: Trigger) {
         trigger.let {
             active = it.active
+            fired = it.fired
             config = it.config
             data = it.data
             surveyId = it.surveyId
@@ -24,6 +25,8 @@ open class Trigger internal constructor(val presentation: Presentation = Present
     internal var type: String = javaClass.simpleName
     @PublishedApi
     internal var active: Boolean = true
+    @PublishedApi
+    internal var fired: Boolean = false
     @PublishedApi
     internal var config: HashMap<String, Any> = hashMapOf()
     @PublishedApi
