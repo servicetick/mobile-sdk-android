@@ -19,14 +19,18 @@ class ApplicationRunCountTrigger(tag: String, runCount: Int, presentation: Prese
         config[CONFIG_KEY_RUN_COUNT] = runCount
     }
 
-    override fun updateApplicationRunCount(count: Int) {
+    override fun updateApplicationRunCount(count: Int, checkFire: Boolean) {
         applicationRunCount += count
         scheduleSave()
+        fireTriggerIfRequired(checkFire)
     }
+
+    private fun getConfigRunCount(): Int = config[CONFIG_KEY_RUN_COUNT] as Int
+    override fun shouldFire(): Boolean = applicationRunCount >= getConfigRunCount()
 
     override fun updateData(data: HashMap<String, Any>?) {
         data?.let {
-            updateApplicationRunCount(data[DATA_KEY_RUN_COUNT] as Int)
+            updateApplicationRunCount(data[DATA_KEY_RUN_COUNT] as Int, false)
         }
     }
 

@@ -19,19 +19,27 @@ class ApplicationRunTimeTrigger(tag: String, runTime: Long, presentation: Presen
         config[CONFIG_KEY_RUN_TIME] = runTime
     }
 
-    override fun updateApplicationRunTime(time: Long) {
+    override fun updateApplicationRunTime(time: Long, checkFire: Boolean) {
         applicationRunTime += time
         scheduleSave()
     }
+
+    /**
+     * We override this because we want to trigger at next run
+     */
+    override fun updateApplicationRunCount(count: Int, checkFire: Boolean) = fireTriggerIfRequired(checkFire)
 
     override fun updateData(data: HashMap<String, Any>?) {
         data?.let {
             val runTime = data[DATA_KEY_RUN_TIME]
             if (runTime is Long) {
-                updateApplicationRunTime(runTime)
+                updateApplicationRunTime(runTime, false)
             }
         }
     }
+
+    private fun getConfigRunTime(): Long = config[CONFIG_KEY_RUN_TIME] as Long
+    override fun shouldFire(): Boolean = applicationRunTime >= getConfigRunTime()
 
     companion object {
         private const val CONFIG_KEY_RUN_TIME = "run_time"

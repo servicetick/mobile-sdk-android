@@ -3,6 +3,7 @@ package com.servicetick.android.library.entities.triggers
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.servicetick.android.library.workers.SaveTriggerDataWorker
+import lilhermit.android.remotelogger.library.Log
 
 @Entity(tableName = "triggers")
 open class Trigger internal constructor(val presentation: Presentation = Presentation.START_ACTIVITY, @PrimaryKey val tag: String, var surveyId: Long) {
@@ -38,9 +39,29 @@ open class Trigger internal constructor(val presentation: Presentation = Present
         return "Trigger(presentation=$presentation, tag='$tag', surveyId=$surveyId, type='$type', active=$active, config=$config, data=$data)"
     }
 
-    internal open fun updateApplicationRunCount(count : Int = 1) = Unit
-    internal open fun updateApplicationRunTime(time: Long) = Unit
-    internal open fun updateData(data : HashMap<String, Any>?) = Unit
+    internal open fun updateApplicationRunCount(count: Int = 1, checkFire: Boolean = true) = Unit
+    internal open fun updateApplicationRunTime(time: Long, checkFire: Boolean = true) = Unit
+    internal open fun updateData(data: HashMap<String, Any>?) = Unit
+    internal open fun shouldFire() = false
+
+    protected fun fireTriggerIfRequired(checkFire: Boolean) {
+
+        if (checkFire) {
+            val shouldFire = shouldFire()
+            if (active && !fired && shouldFire) {
+                // TODO Add fire mechanism callback
+                fired = true
+            } else {
+                if (fired) {
+                    Log.d("Trigger (tag:$tag) already fired")
+                } else if (!active) {
+                    Log.d("Trigger (tag:$tag) won't fire not active")
+                } else if (!shouldFire) {
+                    Log.d("Trigger (tag:$tag) won't fire conditions not met")
+                }
+            }
+        }
+    }
 
     protected fun scheduleSave() {
         SaveTriggerDataWorker.enqueue(this)
