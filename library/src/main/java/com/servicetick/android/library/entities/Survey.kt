@@ -151,6 +151,14 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
+    internal fun convertTriggerClasses() {
+        triggers.forEachIndexed { index, trigger ->
+            if (trigger.javaClass.kotlin == Trigger::class) {
+                triggers[index] = Trigger.convertTrigger(trigger)
+            }
+        }
+    }
+
     private fun buildResponse(): SurveyResponse {
         return SurveyResponse().apply {
             surveyId = this@Survey.id

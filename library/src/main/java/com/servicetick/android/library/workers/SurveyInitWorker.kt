@@ -10,7 +10,6 @@ import com.servicetick.android.library.db.ServiceTickDao
 import com.servicetick.android.library.entities.Survey
 import com.servicetick.android.library.entities.api.PostSurveyRequest
 import com.servicetick.android.library.entities.db.BaseSurvey
-import com.servicetick.android.library.entities.triggers.Trigger
 import io.multifunctions.letCheckNull
 import lilhermit.android.remotelogger.library.Log
 import org.koin.standalone.KoinComponent
@@ -46,6 +45,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
                     // and it's cleaner than creating a clone constructor and converting (We would have to convert the
                     // List<BaseSurveyQuestion> to List<SurveyQuestion> too!
                     serviceTickDao.getSurvey(apiSurvey.id)?.let { survey ->
+                        survey.convertTriggerClasses()
                         serviceTick.surveyMap[survey.id] = survey
                     }
 
@@ -109,10 +109,6 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
 
         val newSurvey = serviceTick.getSurveyByState(id)
 
-        newSurvey?.triggers?.forEachIndexed { index, trigger ->
-            newSurvey.triggers[index] = Trigger.convertTrigger(trigger)
-        }
-
         if (databaseSurvey != null) {
 
             if (newSurvey?.triggers?.isEmpty() == true) {
@@ -143,6 +139,10 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
             newSurvey?.let { survey ->
                 serviceTickDao.insert(survey.triggers)
             }
+        }
+
+        newSurvey?.let {
+            databaseSurvey?.triggers = it.triggers
         }
     }
 
