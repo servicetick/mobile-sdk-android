@@ -7,7 +7,7 @@ class ApplicationRunTimeTrigger(tag: String, runTime: Long, presentation: Presen
             return data[DATA_KEY_RUN_TIME]?.let { it as Long } ?: let { 0L }
         }
         set(value) {
-            field += value
+            field = value
             data[DATA_KEY_RUN_TIME] = field
         }
 

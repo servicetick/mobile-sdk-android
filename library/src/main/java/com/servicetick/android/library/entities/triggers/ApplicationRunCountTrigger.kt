@@ -7,7 +7,7 @@ class ApplicationRunCountTrigger(tag: String, runCount: Int, presentation: Prese
             return data[DATA_KEY_RUN_COUNT]?.let { it as Int } ?: let { 0 }
         }
         set(value) {
-            field += value
+            field = value
             data[DATA_KEY_RUN_COUNT] = field
         }
 
