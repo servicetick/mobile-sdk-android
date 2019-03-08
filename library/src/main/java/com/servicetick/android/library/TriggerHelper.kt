@@ -2,6 +2,7 @@ package com.servicetick.android.library
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Handler
 import org.koin.standalone.KoinComponent
 import kotlin.collections.set
 
@@ -9,6 +10,8 @@ internal class TriggerHelper(private val listener: TriggerHelperCallback) : Koin
 
     private var activityCount: Int = 0
     private var activityStartTimes = HashMap<String, Long>()
+    private val applicationRunRunnable = Runnable { listener.onApplicationRun() }
+    private val handler = Handler()
 
     internal fun addActivity(activity: Activity?) {
 
@@ -44,7 +47,7 @@ internal class TriggerHelper(private val listener: TriggerHelperCallback) : Koin
     }
 
     private fun incrementApplicationRunCount() {
-        listener.onApplicationRun()
+        handler.postDelayed(applicationRunRunnable, 2000)
     }
 
     private fun getCurrentTime() = System.currentTimeMillis() / 1000
