@@ -89,7 +89,11 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
-    private fun startTrigger(trigger: Trigger): Fragment? {
+    fun getTrigger(triggerTag : String) : Trigger? {
+        return triggers.first { it.tag == triggerTag && it.active }
+    }
+
+    internal fun startTrigger(trigger: Trigger): Fragment? {
 
         // Until we add a trigger max_activation" count
         if (getResponse().isComplete) {

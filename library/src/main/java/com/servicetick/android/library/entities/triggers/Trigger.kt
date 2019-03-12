@@ -1,12 +1,18 @@
 package com.servicetick.android.library.entities.triggers
 
+import androidx.lifecycle.GenericLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.servicetick.android.library.ServiceTick
+import com.servicetick.android.library.entities.Survey
 import com.servicetick.android.library.workers.SaveTriggerWorker
 import lilhermit.android.remotelogger.library.Log
 
 @Entity(tableName = "triggers")
-open class Trigger internal constructor(val presentation: Presentation = Presentation.START_ACTIVITY, @PrimaryKey val tag: String, var surveyId: Long) {
+open class Trigger internal constructor(@PublishedApi internal val presentation: Presentation = Presentation.START_ACTIVITY, @PrimaryKey val tag: String, @PublishedApi internal var surveyId: Long) {
 
     internal constructor(trigger: Trigger) : this(trigger.presentation, trigger.tag, trigger.surveyId) {
         clone(trigger)
@@ -33,6 +39,35 @@ open class Trigger internal constructor(val presentation: Presentation = Present
     @PublishedApi
     internal var data: HashMap<String, Any> = hashMapOf()
 
+    @Transient
+    private val foreverObservers: MutableList<TriggerFiredObserver> = mutableListOf()
+    @Transient
+    private val lifecycleObservers: HashMap<LifecycleOwner, TriggerFiredObserver> = hashMapOf()
+    @Transient
+    private var survey: Survey? = null
+        get() {
+            if (field == null) {
+                field = ServiceTick.get().getSurvey(surveyId)
+            }
+            return field
+        }
+
+    /**
+     * This allows us remove any DESTROYED lifecycle owners, keeps the
+     * observer list as clean as possible
+     */
+    @Transient
+    private val lifecycleObserver = object : GenericLifecycleObserver {
+        override fun onStateChanged(source: LifecycleOwner?, event: Lifecycle.Event?) {
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                source?.let { lifecycleOwner ->
+                    lifecycleOwner.lifecycle.removeObserver(this)
+                    removeObservers(lifecycleOwner)
+                }
+            }
+        }
+    }
+
     internal fun canStore(): Boolean = javaClass.kotlin != ManualTrigger::class
 
     override fun toString(): String {
@@ -49,9 +84,7 @@ open class Trigger internal constructor(val presentation: Presentation = Present
         if (checkFire) {
             val shouldFire = shouldFire()
             if (active && !fired && shouldFire) {
-                // TODO Add fire mechanism callback
-                fired = true
-                scheduleSave()
+                notifyObservers()
             } else {
                 if (fired) {
                     Log.d("Trigger (tag:$tag) already fired")
@@ -60,6 +93,71 @@ open class Trigger internal constructor(val presentation: Presentation = Present
                 } else if (!shouldFire) {
                     Log.d("Trigger (tag:$tag) won't fire conditions not met")
                 }
+            }
+        }
+    }
+
+    fun launchSurvey() {
+        survey?.run {
+            startTrigger(this@Trigger)
+            fired = true
+            scheduleSave()
+        }
+    }
+
+    inline fun observe(lifecycleOwner: LifecycleOwner, crossinline action: (trigger: Trigger) -> Unit): Trigger.TriggerFiredObserver {
+
+        val observer = object : Trigger.TriggerFiredObserver {
+            override fun triggerFired(trigger: Trigger) {
+                action(trigger)
+            }
+        }
+        observe(lifecycleOwner, observer)
+        return observer
+    }
+
+    fun observe(lifecycleOwner: LifecycleOwner, observer: TriggerFiredObserver) {
+
+        if (lifecycleOwner.lifecycle.currentState === Lifecycle.State.DESTROYED) {
+            return
+        }
+        addObserver(observer, lifecycleOwner)
+    }
+
+    fun observeForever(observer: TriggerFiredObserver) {
+        addObserver(observer)
+    }
+
+    fun removeObservers(lifecycleOwner: LifecycleOwner) {
+        lifecycleObservers.remove(lifecycleOwner)
+    }
+
+    fun removeObserver(observer: TriggerFiredObserver) {
+        foreverObservers.remove(observer)
+    }
+
+    private fun notifyObservers() {
+        foreverObservers.forEach { observer ->
+            observer.triggerFired(this)
+        }
+
+        lifecycleObservers.forEach { entry ->
+            if (entry.key.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                entry.value.triggerFired(this)
+            }
+        }
+    }
+
+    private fun addObserver(observer: TriggerFiredObserver, lifecycleOwner: LifecycleOwner? = null) {
+
+        if (lifecycleOwner == null) {
+            if (!foreverObservers.contains(observer)) {
+                foreverObservers.add(observer)
+            }
+        } else {
+            if (!lifecycleObservers.containsKey(lifecycleOwner)) {
+                lifecycleObservers[lifecycleOwner] = observer
+                lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
             }
         }
     }
@@ -89,5 +187,9 @@ open class Trigger internal constructor(val presentation: Presentation = Present
          * This mode returns you a fragment either directly or via a callbacl
          */
         FRAGMENT
+    }
+
+    interface TriggerFiredObserver : LifecycleObserver {
+        fun triggerFired(trigger: Trigger)
     }
 }
