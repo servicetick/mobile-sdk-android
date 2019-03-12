@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.servicetick.android.library.R
 import com.servicetick.android.library.activity.SurveyActivity
@@ -27,20 +26,47 @@ class SurveyFragment : BaseFragment() {
     private var viewPager: ExtendedViewPager? = null
     private lateinit var survey: Survey
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        arguments?.getLong(ARG_SURVEY_ID)?.let { id ->
+            if (id > 0L) {
+
+                viewModel.getSurvey(id)?.run {
+                    survey = this
+                    survey.injectResponseAnswers()
+                }
+
+
+            } else {
+                Log.e("Can't retrieve survey ID is null (SurveyFragment)")
+            }
+        }
+
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_survey, container, false)
 
-        viewPager = view.findViewById(R.id.viewPager) as ExtendedViewPager
-        viewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+        viewPager = (view.findViewById(R.id.viewPager) as ExtendedViewPager).apply {
 
-            override fun onPageSelected(position: Int) {
-                updateView(position)
+            addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+
+                override fun onPageSelected(position: Int) {
+                    updateView(position)
+                }
+
+                override fun onPageScrollStateChanged(state: Int) {}
+            })
+
+            adapter = SurveyPageAdapter(childFragmentManager)
+            // Update the view after ViewPager has completed layout
+            post {
+                updateView()
             }
-
-            override fun onPageScrollStateChanged(state: Int) {}
-        })
+        }
 
         view.buttonNext.setOnClickListener {
             movePage()
@@ -51,7 +77,7 @@ class SurveyFragment : BaseFragment() {
         view.buttonFinish.setOnClickListener {
             if (getCurrentFragment().canAdvance()) {
 
-                survey.getResponse().complete()
+                survey.complete()
 
                 // Finish the fragment / activity
                 // TODO potential callback on completion?!
@@ -94,25 +120,6 @@ class SurveyFragment : BaseFragment() {
                 viewPager.currentItem = viewPager.currentItem + 1
             } else if (!forward && viewPager.currentItem > 0) {
                 viewPager.currentItem = viewPager.currentItem - 1
-            }
-        }
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        arguments?.getLong(ARG_SURVEY_ID)?.let { id ->
-            if (id > 0L) {
-                viewModel.getSurvey(id).observe(this, Observer {
-                    it?.run {
-                        survey = this
-                        survey.injectResponseAnswers()
-                        viewPager?.adapter = SurveyPageAdapter(childFragmentManager)
-                        updateView()
-                    }
-                })
-            } else {
-                Log.e("Can't retrieve survey ID is null (SurveyFragment)")
             }
         }
     }

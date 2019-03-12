@@ -120,6 +120,10 @@ class Survey internal constructor(val id: Long) : KoinComponent {
 
     internal fun getPageCount(): Int = renderablePages.size
 
+    internal fun complete() {
+        getResponse().complete()
+    }
+
     fun start(presentation: TriggerPresentation = TriggerPresentation.START_ACTIVITY): Fragment? = startTrigger(ManualTrigger(presentation))
 
     override fun toString(): String {
