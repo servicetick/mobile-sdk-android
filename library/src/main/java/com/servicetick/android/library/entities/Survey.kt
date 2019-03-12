@@ -2,6 +2,9 @@ package com.servicetick.android.library.entities
 
 import android.content.Intent
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.GenericLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.room.Ignore
 import androidx.room.Relation
 import com.servicetick.android.library.AppExecutors
@@ -83,6 +86,27 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         if (pageIds.isNotEmpty()) pageTransitions.filter { pageIds.contains(it.sourcePageId) }.sortedBy { it.order } else emptyList()
     }
 
+    @Transient
+    internal var foreverObservers: MutableList<SurveyObserver> = mutableListOf()
+    @Transient
+    private var lifecycleObservers: HashMap<LifecycleOwner, SurveyObserver> = hashMapOf()
+
+    /**
+     * This allows us remove any DESTROYED lifecycle owners, keeps the
+     * observer list as clean as possible
+     */
+    @Transient
+    private val lifecycleObserver = object : GenericLifecycleObserver {
+        override fun onStateChanged(source: LifecycleOwner?, event: Lifecycle.Event?) {
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                source?.let { lifecycleOwner ->
+                    lifecycleOwner.lifecycle.removeObserver(this)
+                    removeObservers(lifecycleOwner)
+                }
+            }
+        }
+    }
+
     internal fun addTrigger(trigger: Trigger) {
         if (triggers.none { it.tag == trigger.tag }) {
             trigger.surveyId = id
@@ -92,6 +116,66 @@ class Survey internal constructor(val id: Long) : KoinComponent {
 
     fun getTrigger(triggerTag: String): Trigger? {
         return triggers.first { it.tag == triggerTag && it.active }
+    }
+
+    fun observe(lifecycleOwner: LifecycleOwner, observer: SurveyObserver) {
+
+        if (lifecycleOwner.lifecycle.currentState === Lifecycle.State.DESTROYED) {
+            return
+        }
+        addObserver(observer, lifecycleOwner)
+    }
+
+    fun observeForever(observer: SurveyObserver) {
+        addObserver(observer)
+    }
+
+    fun removeObservers(lifecycleOwner: LifecycleOwner) {
+        lifecycleObservers.remove(lifecycleOwner)
+    }
+
+    fun removeObserver(observer: SurveyObserver) {
+        foreverObservers.remove(observer)
+    }
+
+    internal fun notifyPageChangeObservers(newPage: Int, oldPage: Int) {
+        Log.d("SurveyObserver: Notifying onPageChange forever:${foreverObservers.size}, lifecycle:${lifecycleObservers.size}")
+        foreverObservers.forEach { observer ->
+            observer.onPageChange(newPage, oldPage)
+        }
+
+        lifecycleObservers.forEach { entry ->
+            if (entry.key.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                entry.value.onPageChange(newPage, oldPage)
+            }
+        }
+    }
+
+    internal fun notifySurveyCompleteObservers() {
+        Log.d("SurveyObserver: Notifying onSurveyComplete forever:${foreverObservers.size}, lifecycle:${lifecycleObservers.size}")
+        foreverObservers.forEach { observer ->
+            observer.onSurveyComplete()
+        }
+
+        lifecycleObservers.forEach { entry ->
+            if (entry.key.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                entry.value.onSurveyComplete()
+            }
+        }
+    }
+
+    private fun addObserver(observer: SurveyObserver, lifecycleOwner: LifecycleOwner? = null) {
+
+        if (lifecycleOwner == null) {
+            if (!foreverObservers.contains(observer)) {
+                foreverObservers.add(observer)
+            }
+        } else {
+            if (!lifecycleObservers.containsKey(lifecycleOwner)) {
+                lifecycleObservers[lifecycleOwner] = observer
+                lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+            }
+        }
     }
 
     internal fun startTrigger(trigger: Trigger): Fragment? {
@@ -122,6 +206,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
 
     internal fun complete() {
         getResponse().complete()
+        notifySurveyCompleteObservers()
     }
 
     fun start(presentation: TriggerPresentation = TriggerPresentation.START_ACTIVITY): Fragment? = startTrigger(ManualTrigger(presentation))
@@ -203,5 +288,10 @@ class Survey internal constructor(val id: Long) : KoinComponent {
          * The Survey has been disabled
          */
         DISABLED
+    }
+
+    interface SurveyObserver {
+        fun onPageChange(newPage: Int, oldPage: Int)
+        fun onSurveyComplete()
     }
 }

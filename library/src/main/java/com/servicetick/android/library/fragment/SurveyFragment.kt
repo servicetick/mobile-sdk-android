@@ -79,14 +79,9 @@ class SurveyFragment : BaseFragment() {
 
                 survey.complete()
 
-                // Finish the fragment / activity
-                // TODO potential callback on completion?!
+                // Finish the activity
                 if (requireActivity() is SurveyActivity) {
                     requireActivity().finish()
-                } else {
-                    // TODO this will need to be removed and the user will remove or pop backstack
-                    // depending on their implementation. We will need a callback for this
-                    requireFragmentManager().popBackStack()
                 }
             }
         }
@@ -117,8 +112,10 @@ class SurveyFragment : BaseFragment() {
         viewPager?.let { viewPager ->
 
             if (forward && viewPager.currentItem < getAdapter().count - 1) {
+                survey.notifyPageChangeObservers(viewPager.currentItem + 1, viewPager.currentItem + 2)
                 viewPager.currentItem = viewPager.currentItem + 1
             } else if (!forward && viewPager.currentItem > 0) {
+                survey.notifyPageChangeObservers(viewPager.currentItem + 1, viewPager.currentItem)
                 viewPager.currentItem = viewPager.currentItem - 1
             }
         }
