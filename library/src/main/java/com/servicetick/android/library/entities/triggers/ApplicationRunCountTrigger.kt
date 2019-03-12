@@ -20,8 +20,10 @@ internal class ApplicationRunCountTrigger(tag: String, runCount: Int, presentati
     }
 
     override fun updateApplicationRunCount(count: Int, checkFire: Boolean) {
-        applicationRunCount += count
-        scheduleSave()
+        if (active && !fired) {
+            applicationRunCount += count
+            scheduleSave()
+        }
         fireTriggerIfRequired(checkFire)
     }
 

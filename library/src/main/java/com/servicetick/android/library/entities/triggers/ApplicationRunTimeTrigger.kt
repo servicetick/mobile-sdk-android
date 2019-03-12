@@ -20,8 +20,10 @@ internal class ApplicationRunTimeTrigger(tag: String, runTime: Long, presentatio
     }
 
     override fun updateApplicationRunTime(time: Long, checkFire: Boolean) {
-        applicationRunTime += time
-        scheduleSave()
+        if (active && !fired) {
+            applicationRunTime += time
+            scheduleSave()
+        }
     }
 
     /**
