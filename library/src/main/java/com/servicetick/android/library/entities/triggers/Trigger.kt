@@ -137,6 +137,7 @@ open class Trigger internal constructor(@PublishedApi internal val presentation:
     }
 
     private fun notifyObservers() {
+        Log.d("Trigger (tag:$tag) Notifying observers forever:${foreverObservers.size}, lifecyle:${lifecycleObservers.size}")
         foreverObservers.forEach { observer ->
             observer.triggerFired(this)
         }
