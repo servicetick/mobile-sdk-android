@@ -25,6 +25,9 @@ open class Trigger internal constructor(@PublishedApi internal val presentation:
             config = it.config
             data = it.data
             surveyId = it.surveyId
+            foreverObservers = it.foreverObservers
+            lifecycleObservers = it.lifecycleObservers
+            survey = it.survey
         }
     }
 
@@ -40,9 +43,9 @@ open class Trigger internal constructor(@PublishedApi internal val presentation:
     internal var data: HashMap<String, Any> = hashMapOf()
 
     @Transient
-    private val foreverObservers: MutableList<TriggerFiredObserver> = mutableListOf()
+    private var foreverObservers: MutableList<TriggerFiredObserver> = mutableListOf()
     @Transient
-    private val lifecycleObservers: HashMap<LifecycleOwner, TriggerFiredObserver> = hashMapOf()
+    private var lifecycleObservers: HashMap<LifecycleOwner, TriggerFiredObserver> = hashMapOf()
     @Transient
     private var survey: Survey? = null
         get() {
@@ -137,7 +140,7 @@ open class Trigger internal constructor(@PublishedApi internal val presentation:
     }
 
     private fun notifyObservers() {
-        Log.d("Trigger (tag:$tag) Notifying observers forever:${foreverObservers.size}, lifecyle:${lifecycleObservers.size}")
+        Log.d("Trigger (tag:$tag) Notifying observers forever:${foreverObservers.size}, lifecycle:${lifecycleObservers.size}")
         foreverObservers.forEach { observer ->
             observer.triggerFired(this)
         }

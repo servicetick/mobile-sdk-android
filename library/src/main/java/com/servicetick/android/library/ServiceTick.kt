@@ -157,6 +157,8 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
         }
     }
 
+    internal fun getDebug() : Boolean = config["debug"] as Boolean
+
     companion object {
 
         @Volatile
