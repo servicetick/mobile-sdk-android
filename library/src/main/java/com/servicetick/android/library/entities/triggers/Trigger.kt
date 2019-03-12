@@ -12,7 +12,7 @@ import com.servicetick.android.library.workers.SaveTriggerWorker
 import lilhermit.android.remotelogger.library.Log
 
 @Entity(tableName = "triggers")
-open class Trigger internal constructor(@PublishedApi internal val presentation: Presentation = Presentation.START_ACTIVITY, @PrimaryKey val tag: String, @PublishedApi internal var surveyId: Long) {
+open class Trigger internal constructor(@PublishedApi internal val presentation: TriggerPresentation = TriggerPresentation.START_ACTIVITY, @PrimaryKey val tag: String, @PublishedApi internal var surveyId: Long) {
 
     internal constructor(trigger: Trigger) : this(trigger.presentation, trigger.tag, trigger.surveyId) {
         clone(trigger)
@@ -174,19 +174,6 @@ open class Trigger internal constructor(@PublishedApi internal val presentation:
                 else -> trigger
             }
         }
-    }
-
-    enum class Presentation {
-
-        /**
-         * This mode starts an activity with the Survey in
-         */
-        START_ACTIVITY,
-
-        /**
-         * This mode returns you a fragment either directly or via a callbacl
-         */
-        FRAGMENT
     }
 
     interface TriggerFiredObserver : LifecycleObserver {

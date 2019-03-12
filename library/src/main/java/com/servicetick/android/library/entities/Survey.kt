@@ -11,6 +11,7 @@ import com.servicetick.android.library.entities.db.BaseSurveyQuestion
 import com.servicetick.android.library.entities.db.BaseSurveyResponse
 import com.servicetick.android.library.entities.triggers.ManualTrigger
 import com.servicetick.android.library.entities.triggers.Trigger
+import com.servicetick.android.library.entities.triggers.TriggerPresentation
 import com.servicetick.android.library.fragment.SurveyFragment
 import lilhermit.android.remotelogger.library.Log
 import org.koin.standalone.KoinComponent
@@ -82,14 +83,14 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         if (pageIds.isNotEmpty()) pageTransitions.filter { pageIds.contains(it.sourcePageId) }.sortedBy { it.order } else emptyList()
     }
 
-    fun addTrigger(trigger: Trigger) {
+    internal fun addTrigger(trigger: Trigger) {
         if (triggers.none { it.tag == trigger.tag }) {
             trigger.surveyId = id
             triggers.add(trigger)
         }
     }
 
-    fun getTrigger(triggerTag : String) : Trigger? {
+    fun getTrigger(triggerTag: String): Trigger? {
         return triggers.first { it.tag == triggerTag && it.active }
     }
 
@@ -102,7 +103,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
 
         return when (trigger.presentation) {
-            Trigger.Presentation.FRAGMENT -> SurveyFragment.create(id)
+            TriggerPresentation.FRAGMENT -> SurveyFragment.create(id)
             else -> {
                 ServiceTick.get().weakReference.get()?.let { context ->
 
@@ -119,7 +120,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
 
     internal fun getPageCount(): Int = renderablePages.size
 
-    fun start(presentation: Trigger.Presentation = Trigger.Presentation.START_ACTIVITY): Fragment? = startTrigger(ManualTrigger(presentation))
+    fun start(presentation: TriggerPresentation = TriggerPresentation.START_ACTIVITY): Fragment? = startTrigger(ManualTrigger(presentation))
 
     override fun toString(): String {
         return "Survey(id=$id, title=$title, type=$type, state=$state, lastUpdated=${lastUpdated?.time.toString()}, refreshInterval=$refreshInterval)\n   pageTransitions=$pageTransitions\n   questionOptionActions=$questionOptionActions\n   questions=$questions\n   triggers=$triggers\n"

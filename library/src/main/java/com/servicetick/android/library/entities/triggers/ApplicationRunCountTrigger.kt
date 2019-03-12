@@ -1,6 +1,6 @@
 package com.servicetick.android.library.entities.triggers
 
-class ApplicationRunCountTrigger(tag: String, runCount: Int, presentation: Presentation = Presentation.START_ACTIVITY) : Trigger(presentation, tag, -1) {
+internal class ApplicationRunCountTrigger(tag: String, runCount: Int, presentation: TriggerPresentation = TriggerPresentation.START_ACTIVITY) : Trigger(presentation, tag, -1) {
 
     private var applicationRunCount: Int = 0
         get() {

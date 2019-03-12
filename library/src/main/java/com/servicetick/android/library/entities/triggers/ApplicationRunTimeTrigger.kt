@@ -1,6 +1,6 @@
 package com.servicetick.android.library.entities.triggers
 
-class ApplicationRunTimeTrigger(tag: String, runTime: Long, presentation: Presentation = Presentation.START_ACTIVITY) : Trigger(presentation, tag, -1) {
+internal class ApplicationRunTimeTrigger(tag: String, runTime: Long, presentation: TriggerPresentation = TriggerPresentation.START_ACTIVITY) : Trigger(presentation, tag, -1) {
 
     private var applicationRunTime: Long = 0
         get() {

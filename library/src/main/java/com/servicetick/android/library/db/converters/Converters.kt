@@ -3,7 +3,7 @@ package com.servicetick.android.library.db.converters
 import android.os.Parcel
 import androidx.room.TypeConverter
 import com.servicetick.android.library.entities.Survey
-import com.servicetick.android.library.entities.triggers.Trigger
+import com.servicetick.android.library.entities.triggers.TriggerPresentation
 import java.util.*
 
 
@@ -53,11 +53,11 @@ class Converters {
 
         @TypeConverter
         @JvmStatic
-        fun presentationToString(presentation: Trigger.Presentation): String = presentation.toString()
+        fun presentationToString(presentation: TriggerPresentation): String = presentation.toString()
 
         @TypeConverter
         @JvmStatic
-        fun stringToPresentation(presentationName: String): Trigger.Presentation = Trigger.Presentation.valueOf(presentationName)
+        fun stringToPresentation(presentationName: String): TriggerPresentation = TriggerPresentation.valueOf(presentationName)
 
         @TypeConverter
         @JvmStatic

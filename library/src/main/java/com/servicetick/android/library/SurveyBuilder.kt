@@ -1,7 +1,7 @@
 package com.servicetick.android.library
 
 import com.servicetick.android.library.entities.Survey
-import com.servicetick.android.library.entities.triggers.Trigger
+import com.servicetick.android.library.entities.triggers.builders.TriggerBuilder
 import java.util.concurrent.TimeUnit
 
 class SurveyBuilder(surveyId: Long) {
@@ -18,8 +18,8 @@ class SurveyBuilder(surveyId: Long) {
         return this
     }
 
-    fun addTrigger(trigger: Trigger): SurveyBuilder {
-        survey.addTrigger(trigger)
+    fun addTrigger(triggerBuilder: TriggerBuilder): SurveyBuilder {
+        survey.addTrigger(triggerBuilder.build())
         return this
     }
 
