@@ -1,5 +1,6 @@
 package com.servicetick.android.library.entities.triggers
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.GenericLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -100,12 +101,13 @@ open class Trigger internal constructor(@PublishedApi internal val presentation:
         }
     }
 
-    fun launchSurvey() {
+    fun launchSurvey(): Fragment? {
         survey?.run {
-            startTrigger(this@Trigger)
             fired = true
             scheduleSave()
+            return startTrigger(this@Trigger)
         }
+        return null
     }
 
     inline fun observe(lifecycleOwner: LifecycleOwner, crossinline action: (trigger: Trigger) -> Unit): Trigger.TriggerFiredObserver {
