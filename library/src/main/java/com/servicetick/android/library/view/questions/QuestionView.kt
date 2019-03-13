@@ -44,8 +44,6 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Constra
 
     protected open fun postLayout(view: View?) {
         setPadding(16.toDp(resources), 16.toDp(resources), 16.toDp(resources), 16.toDp(resources))
-        view?.run {
-        }
     }
 
     internal open fun isValid() = !isVisible
