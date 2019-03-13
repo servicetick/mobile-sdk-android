@@ -81,7 +81,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
                     }
                 }
             } else {
-                radioGroup?.run {
+                radioGroup.run {
                     visibility = View.VISIBLE
 
                     surveyQuestion.options?.forEach {
@@ -101,7 +101,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
     }
 
     private fun getCheckedIds() = arrayListOf<Int>().apply {
-        radioGroup?.forEach { view ->
+        radioGroup.forEach { view ->
             if (view is RadioButton && view.isChecked) {
                 add(view.id)
             }
@@ -113,7 +113,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
         val valid = super.isValid() || minRequiredAnswers() == 0 || if (renderSlider) {
             (maxRequiredAnswers() != 0 && sliderValue != null)
         } else {
-            (maxRequiredAnswers() != 0 && radioGroup?.checkedRadioButtonId != -1)
+            (maxRequiredAnswers() != 0 && radioGroup.checkedRadioButtonId != -1)
         }
 
         if (valid) clearError() else setError(R.string.must_complete_question)

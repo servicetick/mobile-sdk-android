@@ -38,7 +38,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
                 }
 
                 makeApiCall(id)?.let { apiSurvey ->
-                    updateSurvey(apiSurvey, databaseSurvey)
+                    updateSurvey(apiSurvey)
                     updateSurveyTriggersOnly(apiSurvey.id, databaseSurvey)
 
                     // Because we can't use the apiSurvey type of BaseSurvey, it's a little messy but we are in a thread
@@ -74,7 +74,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
                     }
 
                     makeApiCall(databaseSurvey.id)?.let { apiSurvey ->
-                        updateSurvey(apiSurvey, databaseSurvey)
+                        updateSurvey(apiSurvey)
                     }
                 } else {
                     Log.d("No refresh required for survey: ${databaseSurvey.id}")
@@ -148,7 +148,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
         }
     }
 
-    private fun updateSurvey(apiSurvey: BaseSurvey, databaseSurvey: Survey?) {
+    private fun updateSurvey(apiSurvey: BaseSurvey) {
 
         val newSurvey = serviceTick.getSurveyByState(apiSurvey.id)
 
