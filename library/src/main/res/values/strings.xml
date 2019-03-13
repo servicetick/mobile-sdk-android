@@ -9,4 +9,7 @@
     <string name="please_select_one">Please select one</string>
     <string name="must_complete_question">You must complete this question</string>
 
+    <string name="font_roboto_regular">sans-serif</string>
+    <string name="font_roboto_medium">sans-serif-medium</string>
+
 </resources>

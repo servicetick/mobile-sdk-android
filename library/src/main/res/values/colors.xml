@@ -15,5 +15,5 @@
     <color name="grey13">#222222</color>
     <color name="grey14">#111111</color>
 
-    <color name="red">#ff0000</color>
+    <color name="error_colour">#B92D00</color>
 </resources>

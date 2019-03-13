@@ -6,6 +6,7 @@
 
     <TextView
         android:id="@+id/question"
+        style="@style/TextAppearance.QuestionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/checkboxContainer"
@@ -28,15 +29,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/question" />
 
-    <TextView
-        android:id="@+id/errorMessage"
-        style="@android:style/TextAppearance.Small"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/red"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    <include layout="@layout/error_message" />
 
 </merge>

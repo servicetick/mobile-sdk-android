@@ -12,8 +12,10 @@ import androidx.annotation.Nullable
 import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.core.content.getSystemService
 import androidx.core.view.forEach
+import androidx.core.view.updatePadding
 import com.servicetick.android.library.R
 import com.servicetick.android.library.entities.SurveyQuestionOption
+import com.servicetick.android.library.ktx.toDp
 import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
@@ -85,7 +87,10 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
                     visibility = View.VISIBLE
 
                     surveyQuestion.options?.forEach {
-                        addView(radioButton(it), RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT))
+                        val layoutParams = RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT).apply {
+                            topMargin = 28.toDp(resources)
+                        }
+                        addView(radioButton(it), layoutParams)
                     }
 
                     setOnCheckedChangeListener { _, _ -> clearError() }
@@ -97,6 +102,7 @@ constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : Questio
     private fun radioButton(questionOption: SurveyQuestionOption): AppCompatRadioButton = AppCompatRadioButton(context).apply {
         text = questionOption.option
         id = questionOption.id?.toInt() ?: -1
+        updatePadding(32.toDp(resources))
         isChecked = getAnswerId() == questionOption.id
     }
 

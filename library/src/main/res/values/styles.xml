@@ -12,13 +12,25 @@
     </style>
 
     <style name="ButtonStyle.Borderless.Next">
-        <item name="android:textColor">?android:attr/colorAccent</item>
+        <item name="android:textColor">?attr/colorAccent</item>
     </style>
 
     <style name="ButtonStyle.Finish" parent="Widget.MaterialComponents.Button">
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="backgroundTint">?android:attr/colorAccent</item>
+        <item name="backgroundTint">?attr/colorAccent</item>
+    </style>
+
+    <style name="TextAppearance.QuestionText" parent="Base.TextAppearance.AppCompat">
+        <item name="fontFamily">@string/font_roboto_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
+
+    <style name="TextAppearance.ErrorText" parent="Base.TextAppearance.AppCompat.Small">
+        <item name="fontFamily">@string/font_roboto_regular</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/error_colour</item>
     </style>
 
 </resources>
