@@ -112,10 +112,10 @@ class SurveyFragment : BaseFragment() {
         viewPager?.let { viewPager ->
 
             if (forward && viewPager.currentItem < getAdapter().count - 1) {
-                survey.notifyPageChangeObservers(viewPager.currentItem + 1, viewPager.currentItem + 2)
+                survey.notifyPageChangeObservers(viewPager.currentItem + 2, viewPager.currentItem + 1)
                 viewPager.currentItem = viewPager.currentItem + 1
             } else if (!forward && viewPager.currentItem > 0) {
-                survey.notifyPageChangeObservers(viewPager.currentItem + 1, viewPager.currentItem)
+                survey.notifyPageChangeObservers(viewPager.currentItem, viewPager.currentItem + 1)
                 viewPager.currentItem = viewPager.currentItem - 1
             }
         }
