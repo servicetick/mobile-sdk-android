@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.annotation.Nullable
+import androidx.annotation.RestrictTo
 import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.core.content.getSystemService
 import androidx.core.view.forEach
@@ -20,7 +21,7 @@ import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
 
-
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class RadioQuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : QuestionView(context, attrs, defStyleAttr) {
 

@@ -3,6 +3,7 @@ package com.servicetick.android.library.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
+import androidx.annotation.RestrictTo
 import androidx.core.content.withStyledAttributes
 import androidx.viewpager.widget.ViewPager
 import com.servicetick.android.library.R
@@ -10,6 +11,7 @@ import com.servicetick.android.library.R
 /**
  * ViewPager with disable swipe functionality
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 class ExtendedViewPager @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : ViewPager(context, attrs) {
 
     private var disableSwipe: Boolean = false

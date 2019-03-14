@@ -5,7 +5,9 @@ import android.content.Context
 import android.os.Build
 import android.util.AttributeSet
 import androidx.annotation.Nullable
+import androidx.annotation.RestrictTo
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class TableQuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : QuestionView(context, attrs, defStyleAttr) {
 

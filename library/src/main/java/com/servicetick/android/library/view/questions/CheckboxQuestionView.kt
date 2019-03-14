@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.annotation.Nullable
+import androidx.annotation.RestrictTo
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.core.content.getSystemService
 import androidx.core.view.forEach
@@ -17,7 +18,7 @@ import com.servicetick.android.library.R
 import com.servicetick.android.library.entities.SurveyQuestionOption
 import com.servicetick.android.library.ktx.toDp
 
-
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class CheckboxQuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : QuestionView(context, attrs, defStyleAttr) {
 

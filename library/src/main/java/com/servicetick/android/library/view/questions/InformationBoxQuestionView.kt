@@ -6,9 +6,11 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.annotation.Nullable
+import androidx.annotation.RestrictTo
 import androidx.core.content.getSystemService
 import com.servicetick.android.library.R
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class InformationBoxQuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : QuestionView(context, attrs, defStyleAttr) {
 

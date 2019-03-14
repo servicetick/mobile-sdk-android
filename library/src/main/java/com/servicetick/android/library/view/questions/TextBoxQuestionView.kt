@@ -9,12 +9,14 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.EditText
 import androidx.annotation.Nullable
+import androidx.annotation.RestrictTo
 import androidx.annotation.StringRes
 import androidx.core.content.getSystemService
 import com.google.android.material.textfield.TextInputLayout
 import com.servicetick.android.library.R
 import com.servicetick.android.library.ktx.toDp
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class TextBoxQuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : QuestionView(context, attrs, defStyleAttr) {
 

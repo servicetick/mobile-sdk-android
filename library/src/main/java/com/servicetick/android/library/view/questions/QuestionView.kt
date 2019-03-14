@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.Nullable
+import androidx.annotation.RestrictTo
 import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
@@ -15,6 +16,7 @@ import com.servicetick.android.library.R
 import com.servicetick.android.library.entities.SurveyQuestion
 import com.servicetick.android.library.ktx.toDp
 
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal abstract class QuestionView @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : ConstraintLayout(context, attrs, defStyleAttr) {
 
