@@ -1,1 +1,1 @@
-include ':sample', ':library', ':devapp'
+include ':sample_kotlin', ':library'

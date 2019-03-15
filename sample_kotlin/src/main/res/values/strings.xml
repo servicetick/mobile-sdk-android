@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">ServiceTick Mobile SDK sample (Kotlin)</string>
+    <string name="triggers_off">Triggers off</string>
+    <string name="triggers_on">Triggers on</string>
+    <string name="survey_initialised_successfully">Survey initialised successfully </string>
+    <string name="trigger_app_run_count_not_active">Trigger (app_run_count): not-active</string>
+    <string name="trigger_app_run_count_active">Trigger (app_run_count): active-awaiting-trigger</string>
+    <string name="trigger_app_run_count_triggered">Trigger (app_run_count): triggered</string>
+    <string name="trigger_app_run_time_not_active">Trigger (app_run_time): not-active</string>
+    <string name="trigger_app_run_time_active">Trigger (app_run_time): active-awaiting-trigger</string>
+    <string name="trigger_app_run_time_triggered">Trigger (app_run_time): triggered</string>
+    <string name="on_page_change_toast">Survey Page changed to %1$d (was %2$d)</string>
+    <string name="triggers_will_start_next_launch">Triggers will start tracking events on next launch</string>
+    <string name="survey_already_completed">This survey is already completed</string>
+    <string name="launch_survey_manually_fragment">Launch Survey Manually Fragment</string>
+    <string name="launch_survey_manually_activity">Launch Survey Manually Activity</string>
+</resources>
