@@ -87,9 +87,9 @@ class Survey internal constructor(val id: Long) : KoinComponent {
     }
 
     @Transient
-    internal var foreverObservers: MutableList<SurveyObserver> = mutableListOf()
+    internal var foreverExecutionObservers: MutableList<ExecutionObserver> = mutableListOf()
     @Transient
-    private var lifecycleObservers: HashMap<LifecycleOwner, SurveyObserver> = hashMapOf()
+    private var lifecycleExecutionObservers: HashMap<LifecycleOwner, ExecutionObserver> = hashMapOf()
 
     /**
      * This allows us remove any DESTROYED lifecycle owners, keeps the
@@ -101,7 +101,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
             if (event == Lifecycle.Event.ON_DESTROY) {
                 source?.let { lifecycleOwner ->
                     lifecycleOwner.lifecycle.removeObserver(this)
-                    removeObservers(lifecycleOwner)
+                    removeExecutionObservers(lifecycleOwner)
                 }
             }
         }
@@ -118,61 +118,61 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         return triggers.first { it.tag == triggerTag && it.active }
     }
 
-    fun observe(lifecycleOwner: LifecycleOwner, observer: SurveyObserver) {
+    fun observeExecution(lifecycleOwner: LifecycleOwner, observer: ExecutionObserver) {
 
         if (lifecycleOwner.lifecycle.currentState === Lifecycle.State.DESTROYED) {
             return
         }
-        addObserver(observer, lifecycleOwner)
+        addExecutionObserver(observer, lifecycleOwner)
     }
 
-    fun observeForever(observer: SurveyObserver) {
-        addObserver(observer)
+    fun observeExecutionForever(observer: ExecutionObserver) {
+        addExecutionObserver(observer)
     }
 
-    fun removeObservers(lifecycleOwner: LifecycleOwner) {
-        lifecycleObservers.remove(lifecycleOwner)
+    fun removeExecutionObservers(lifecycleOwner: LifecycleOwner) {
+        lifecycleExecutionObservers.remove(lifecycleOwner)
     }
 
-    fun removeObserver(observer: SurveyObserver) {
-        foreverObservers.remove(observer)
+    fun removeExecutionObserver(observer: ExecutionObserver) {
+        foreverExecutionObservers.remove(observer)
     }
 
     internal fun notifyPageChangeObservers(newPage: Int, oldPage: Int) {
-        Log.d("SurveyObserver: Notifying onPageChange forever:${foreverObservers.size}, lifecycle:${lifecycleObservers.size}")
-        foreverObservers.forEach { observer ->
+        Log.d("ExecutionObserver: Notifying onPageChange forever:${foreverExecutionObservers.size}, lifecycle:${lifecycleExecutionObservers.size}")
+        foreverExecutionObservers.forEach { observer ->
             observer.onPageChange(newPage, oldPage)
         }
 
-        lifecycleObservers.forEach { entry ->
+        lifecycleExecutionObservers.forEach { entry ->
             if (entry.key.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                 entry.value.onPageChange(newPage, oldPage)
             }
         }
     }
 
-    internal fun notifySurveyCompleteObservers() {
-        Log.d("SurveyObserver: Notifying onSurveyComplete forever:${foreverObservers.size}, lifecycle:${lifecycleObservers.size}")
-        foreverObservers.forEach { observer ->
-            observer.onSurveyComplete()
+    private fun notifySurveyCompleteObservers() {
+        Log.d("ExecutionObserver: Notifying onSurveyComplete forever:${foreverExecutionObservers.size}, lifecycle:${lifecycleExecutionObservers.size}")
+        foreverExecutionObservers.forEach { executionObserver ->
+            executionObserver.onSurveyComplete()
         }
 
-        lifecycleObservers.forEach { entry ->
+        lifecycleExecutionObservers.forEach { entry ->
             if (entry.key.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                 entry.value.onSurveyComplete()
             }
         }
     }
 
-    private fun addObserver(observer: SurveyObserver, lifecycleOwner: LifecycleOwner? = null) {
+    private fun addExecutionObserver(observerExecutionObserver: ExecutionObserver, lifecycleOwner: LifecycleOwner? = null) {
 
         if (lifecycleOwner == null) {
-            if (!foreverObservers.contains(observer)) {
-                foreverObservers.add(observer)
+            if (!foreverExecutionObservers.contains(observerExecutionObserver)) {
+                foreverExecutionObservers.add(observerExecutionObserver)
             }
         } else {
-            if (!lifecycleObservers.containsKey(lifecycleOwner)) {
-                lifecycleObservers[lifecycleOwner] = observer
+            if (!lifecycleExecutionObservers.containsKey(lifecycleOwner)) {
+                lifecycleExecutionObservers[lifecycleOwner] = observerExecutionObserver
                 lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
             }
         }
@@ -290,7 +290,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         DISABLED
     }
 
-    interface SurveyObserver {
+    interface ExecutionObserver {
         fun onPageChange(newPage: Int, oldPage: Int)
         fun onSurveyComplete()
     }
