@@ -34,8 +34,7 @@ open class Trigger internal constructor(@PublishedApi internal val presentation:
 
     @PublishedApi
     internal var type: String = javaClass.simpleName
-    @PublishedApi
-    internal var active: Boolean = true
+    var active: Boolean = true
     @PublishedApi
     internal var fired: Boolean = false
     @PublishedApi

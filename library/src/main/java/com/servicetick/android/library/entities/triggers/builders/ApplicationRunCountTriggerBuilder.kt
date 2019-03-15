@@ -9,6 +9,7 @@ class ApplicationRunCountTriggerBuilder {
         private var runCount: Int? = null
         private var tag: String? = null
         private var presentation: TriggerPresentation = TriggerPresentation.START_ACTIVITY
+        private var active = true
 
         fun setTag(tag: String): Companion {
             this.tag = tag
@@ -25,12 +26,19 @@ class ApplicationRunCountTriggerBuilder {
             return this
         }
 
+        fun setActive(active: Boolean): Companion {
+            this.active = active
+            return this
+        }
+
         override fun build(): ApplicationRunCountTrigger {
 
             tag?.let { triggerTag ->
 
                 runCount?.let { triggerRunCount ->
-                    return ApplicationRunCountTrigger(triggerTag, triggerRunCount, presentation)
+                    return ApplicationRunCountTrigger(triggerTag, triggerRunCount, presentation).apply {
+                        active = this@Companion.active
+                    }
 
                 } ?: run {
                     throw RuntimeException("You must call setRunCount in the TriggerBuilder")
