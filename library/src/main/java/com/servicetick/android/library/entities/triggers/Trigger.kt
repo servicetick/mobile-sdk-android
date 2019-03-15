@@ -100,8 +100,9 @@ open class Trigger internal constructor(@PublishedApi internal val presentation:
         }
     }
 
-    fun launchSurvey(): Fragment? {
+    fun launchSurvey(observer: Survey.ExecutionObserver? = null, lifecycleOwner: LifecycleOwner? = null): Fragment? {
         survey?.run {
+            addExecutionObserver(observer, lifecycleOwner)
             fired = true
             scheduleSave()
             return startTrigger(this@Trigger)

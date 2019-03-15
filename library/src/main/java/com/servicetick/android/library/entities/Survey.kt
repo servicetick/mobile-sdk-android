@@ -186,7 +186,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
-    fun observeExecution(lifecycleOwner: LifecycleOwner, observer: ExecutionObserver) {
+    internal fun observeExecution(lifecycleOwner: LifecycleOwner, observer: ExecutionObserver) {
 
         if (lifecycleOwner.lifecycle.currentState === Lifecycle.State.DESTROYED) {
             return
@@ -194,7 +194,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         addExecutionObserver(observer, lifecycleOwner)
     }
 
-    fun observeExecutionForever(observer: ExecutionObserver) {
+    internal fun observeExecutionForever(observer: ExecutionObserver) {
         addExecutionObserver(observer)
     }
 
@@ -227,25 +227,30 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         Log.d("ExecutionObserver: Notifying onSurveyComplete forever:${foreverExecutionObservers.size}, lifecycle:${lifecycleExecutionObservers.size}")
         foreverExecutionObservers.forEach { executionObserver ->
             executionObserver.onSurveyComplete()
+            removeExecutionObserver(executionObserver)
         }
 
         lifecycleExecutionObservers.forEach { entry ->
             if (entry.key.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                 entry.value.onSurveyComplete()
+                removeExecutionObservers(entry.key)
             }
         }
     }
 
-    private fun addExecutionObserver(observerExecutionObserver: ExecutionObserver, lifecycleOwner: LifecycleOwner? = null) {
+    internal fun addExecutionObserver(observerExecutionObserver: ExecutionObserver?, lifecycleOwner: LifecycleOwner? = null) {
 
-        if (lifecycleOwner == null) {
-            if (!foreverExecutionObservers.contains(observerExecutionObserver)) {
-                foreverExecutionObservers.add(observerExecutionObserver)
-            }
-        } else {
-            if (!lifecycleExecutionObservers.containsKey(lifecycleOwner)) {
-                lifecycleExecutionObservers[lifecycleOwner] = observerExecutionObserver
-                lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+        observerExecutionObserver?.let { observer ->
+
+            if (lifecycleOwner == null) {
+                if (!foreverExecutionObservers.contains(observer)) {
+                    foreverExecutionObservers.add(observer)
+                }
+            } else {
+                if (!lifecycleExecutionObservers.containsKey(lifecycleOwner)) {
+                    lifecycleExecutionObservers[lifecycleOwner] = observer
+                    lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+                }
             }
         }
     }
@@ -281,7 +286,10 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         notifySurveyCompleteObservers()
     }
 
-    fun start(presentation: TriggerPresentation = TriggerPresentation.START_ACTIVITY): Fragment? = startTrigger(ManualTrigger(presentation))
+    fun start(presentation: TriggerPresentation = TriggerPresentation.START_ACTIVITY, observer: ExecutionObserver? = null, lifecycleOwner: LifecycleOwner? = null): Fragment? {
+        addExecutionObserver(observer, lifecycleOwner)
+        return startTrigger(ManualTrigger(presentation))
+    }
 
     override fun toString(): String {
         return "Survey(id=$id, title=$title, type=$type, state=$state, lastUpdated=${lastUpdated?.time.toString()}, refreshInterval=$refreshInterval)\n   pageTransitions=$pageTransitions\n   questionOptionActions=$questionOptionActions\n   questions=$questions\n   triggers=$triggers\n"

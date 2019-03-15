@@ -32,7 +32,7 @@ internal class ApplicationRunCountTrigger(tag: String, runCount: Int, presentati
 
     override fun updateData(data: HashMap<String, Any>?) {
         data?.let {
-            val runCount =  it[DATA_KEY_RUN_COUNT]
+            val runCount = it[DATA_KEY_RUN_COUNT]
             if (runCount is Int) {
                 updateApplicationRunCount(runCount, false)
             }
