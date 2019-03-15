@@ -121,7 +121,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
     }
 
     fun getTrigger(triggerTag: String): Trigger? {
-        return triggers.first { it.tag == triggerTag && it.active }
+        return triggers.firstOrNull { it.tag == triggerTag && it.active }
     }
 
     internal fun addStateChangeObserver(stateChangeObserver: Survey.StateChangeObserver?, lifecycleOwner: LifecycleOwner? = null) {
