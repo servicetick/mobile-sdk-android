@@ -46,6 +46,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
                     // List<BaseSurveyQuestion> to List<SurveyQuestion> too!
                     serviceTickDao.getSurvey(apiSurvey.id)?.let { survey ->
                         survey.convertTriggerClasses()
+                        saveObservers(survey)
                         serviceTick.surveyMap[survey.id] = survey
                     }
 
@@ -57,6 +58,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
 
             } else {
                 updateSurveyTriggersOnly(databaseSurvey.id, databaseSurvey)
+                saveObservers(databaseSurvey)
                 serviceTick.surveyMap[databaseSurvey.id] = databaseSurvey
 
                 return ListenableWorker.Result.success(putOutputDataState(databaseSurvey.state))
@@ -103,6 +105,15 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
         }
 
         return null
+    }
+
+    private fun saveObservers(survey: Survey) {
+        serviceTick.getSurveyByState(survey.id)?.let { surveyFromMap ->
+            survey.foreverStateChangeObservers = surveyFromMap.foreverStateChangeObservers
+            survey.lifecycleStateChangeObservers = surveyFromMap.lifecycleStateChangeObservers
+            survey.foreverExecutionObservers = surveyFromMap.foreverExecutionObservers
+            survey.lifecycleExecutionObservers = surveyFromMap.lifecycleExecutionObservers
+        }
     }
 
     private fun updateSurveyTriggersOnly(id: Long, databaseSurvey: Survey?) {

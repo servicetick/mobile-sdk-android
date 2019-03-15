@@ -4,7 +4,10 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import com.servicetick.android.library.db.ServiceTickDao
 import com.servicetick.android.library.entities.Survey
@@ -72,17 +75,14 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
         })
     }
 
-    fun addSurvey(surveyBuilder: SurveyBuilder): LiveData<Survey.State> {
-
-        val liveData = MutableLiveData<Survey.State>()
+    fun addSurvey(surveyBuilder: SurveyBuilder, observer: Survey.StateChangeObserver? = null, lifecycleOwner: LifecycleOwner? = null) {
 
         val survey = surveyBuilder.build()
 
         if (!surveyMap.contains(survey.id)) {
 
-            liveData.postValue(survey.state)
-
             surveyMap[survey.id] = survey
+            getSurveyByState(survey.id)?.addStateChangeObserver(observer, lifecycleOwner)
 
             SurveyInitWorker.enqueue(survey, this, object : Observer<WorkInfo> {
 
@@ -91,9 +91,8 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
                 override fun onChanged(workStatus: WorkInfo?) {
                     if (workStatus?.state == WorkInfo.State.SUCCEEDED) {
                         val newState = SurveyInitWorker.getOutputDataState(workStatus)
-
                         if (previousState != newState) {
-                            liveData.postValue(newState)
+                            surveyMap[survey.id]?.notifyStateChangeObservers()
                             previousState = newState
                         }
 
@@ -106,7 +105,25 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
 
             })
         }
-        return liveData
+    }
+
+    fun observeSurveyStateChange(id: Long, lifecycleOwner: LifecycleOwner, observer: Survey.StateChangeObserver) {
+        if (lifecycleOwner.lifecycle.currentState === Lifecycle.State.DESTROYED) {
+            return
+        }
+        getSurveyByState(id)?.addStateChangeObserver(observer, lifecycleOwner)
+    }
+
+    fun observeSurveyStateChangeForever(id: Long, observer: Survey.StateChangeObserver) {
+        getSurveyByState(id)?.addStateChangeObserver(observer)
+    }
+
+    fun removeSurveyStateChangeObservers(id: Long, lifecycleOwner: LifecycleOwner) {
+        getSurveyByState(id)?.removeStateChangeObservers(lifecycleOwner)
+    }
+
+    fun removeSurveyStateChangeObserver(id: Long, observer: Survey.StateChangeObserver) {
+        getSurveyByState(id)?.removeStateChangeObserver(observer)
     }
 
     fun getSurvey(id: Long): Survey? {
@@ -157,7 +174,7 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
         }
     }
 
-    internal fun getDebug() : Boolean = config["debug"] as Boolean
+    internal fun getDebug(): Boolean = config["debug"] as Boolean
 
     companion object {
 

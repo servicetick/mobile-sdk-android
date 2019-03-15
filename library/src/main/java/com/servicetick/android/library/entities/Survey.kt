@@ -89,7 +89,12 @@ class Survey internal constructor(val id: Long) : KoinComponent {
     @Transient
     internal var foreverExecutionObservers: MutableList<ExecutionObserver> = mutableListOf()
     @Transient
-    private var lifecycleExecutionObservers: HashMap<LifecycleOwner, ExecutionObserver> = hashMapOf()
+    internal var lifecycleExecutionObservers: HashMap<LifecycleOwner, ExecutionObserver> = hashMapOf()
+    @Transient
+    internal var foreverStateChangeObservers: MutableList<Survey.StateChangeObserver> = mutableListOf()
+    @Transient
+    internal var lifecycleStateChangeObservers: HashMap<LifecycleOwner, Survey.StateChangeObserver> = hashMapOf()
+
 
     /**
      * This allows us remove any DESTROYED lifecycle owners, keeps the
@@ -102,6 +107,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
                 source?.let { lifecycleOwner ->
                     lifecycleOwner.lifecycle.removeObserver(this)
                     removeExecutionObservers(lifecycleOwner)
+                    removeStateChangeObservers(lifecycleOwner)
                 }
             }
         }
@@ -116,6 +122,68 @@ class Survey internal constructor(val id: Long) : KoinComponent {
 
     fun getTrigger(triggerTag: String): Trigger? {
         return triggers.first { it.tag == triggerTag && it.active }
+    }
+
+    internal fun addStateChangeObserver(stateChangeObserver: Survey.StateChangeObserver?, lifecycleOwner: LifecycleOwner? = null) {
+        stateChangeObserver?.let { observer ->
+
+            if (lifecycleOwner == null) {
+                if (!foreverStateChangeObservers.contains(observer)) {
+                    if (state == State.ENQUEUED) {
+                        foreverStateChangeObservers.add(observer)
+                        notifyStateChangeObservers()
+                    } else {
+                        Log.d("StateChangeObserver: Survey already initialised (Notifying onSurveyStateChange, not adding listener)")
+                        notifyStateChangeObserver(observer)
+                    }
+
+                }
+            } else {
+                if (!lifecycleStateChangeObservers.containsKey(lifecycleOwner)) {
+                    if (state == State.ENQUEUED) {
+                        lifecycleStateChangeObservers[lifecycleOwner] = observer
+                        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+                        notifyStateChangeObservers()
+                    } else {
+                        Log.d("StateChangeObserver: Survey already initialised (Notifying onSurveyStateChange, not adding listener)")
+                        notifyStateChangeObserver(observer)
+                    }
+                }
+            }
+        }
+    }
+
+    fun observeStateChange(lifecycleOwner: LifecycleOwner, observer: Survey.StateChangeObserver) {
+
+        if (lifecycleOwner.lifecycle.currentState === Lifecycle.State.DESTROYED) {
+            return
+        }
+        addStateChangeObserver(observer, lifecycleOwner)
+    }
+
+    fun observeStateChangeForever(observer: Survey.StateChangeObserver) {
+        addStateChangeObserver(observer)
+    }
+
+    fun removeStateChangeObservers(lifecycleOwner: LifecycleOwner) {
+        lifecycleStateChangeObservers.remove(lifecycleOwner)
+    }
+
+    fun removeStateChangeObserver(observer: Survey.StateChangeObserver) {
+        foreverStateChangeObservers.remove(observer)
+    }
+
+    internal fun notifyPageChangeObservers(newPage: Int, oldPage: Int) {
+        Log.d("ExecutionObserver: Notifying onPageChange forever:${foreverExecutionObservers.size}, lifecycle:${lifecycleExecutionObservers.size}")
+        foreverExecutionObservers.forEach { observer ->
+            observer.onPageChange(newPage, oldPage)
+        }
+
+        lifecycleExecutionObservers.forEach { entry ->
+            if (entry.key.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                entry.value.onPageChange(newPage, oldPage)
+            }
+        }
     }
 
     fun observeExecution(lifecycleOwner: LifecycleOwner, observer: ExecutionObserver) {
@@ -138,15 +206,19 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         foreverExecutionObservers.remove(observer)
     }
 
-    internal fun notifyPageChangeObservers(newPage: Int, oldPage: Int) {
-        Log.d("ExecutionObserver: Notifying onPageChange forever:${foreverExecutionObservers.size}, lifecycle:${lifecycleExecutionObservers.size}")
-        foreverExecutionObservers.forEach { observer ->
-            observer.onPageChange(newPage, oldPage)
+    private fun notifyStateChangeObserver(observer: StateChangeObserver) {
+        observer.onSurveyStateChange(state, if (state != State.ENQUEUED) this else null)
+    }
+
+    internal fun notifyStateChangeObservers() {
+        Log.d("StateChangeObserver: Notifying onSurveyStateChange forever:${foreverStateChangeObservers.size}, lifecycle:${lifecycleStateChangeObservers.size}")
+        foreverStateChangeObservers.forEach { observer ->
+            notifyStateChangeObserver(observer)
         }
 
-        lifecycleExecutionObservers.forEach { entry ->
+        lifecycleStateChangeObservers.forEach { entry ->
             if (entry.key.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                entry.value.onPageChange(newPage, oldPage)
+                notifyStateChangeObserver(entry.value)
             }
         }
     }
@@ -293,5 +365,9 @@ class Survey internal constructor(val id: Long) : KoinComponent {
     interface ExecutionObserver {
         fun onPageChange(newPage: Int, oldPage: Int)
         fun onSurveyComplete()
+    }
+
+    interface StateChangeObserver {
+        fun onSurveyStateChange(surveyState: Survey.State, survey: Survey?)
     }
 }
