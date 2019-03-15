@@ -238,6 +238,21 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
+    private fun notifySurveyAlreadyCompleteObservers() {
+        Log.d("ExecutionObserver: Notifying onSurveyAlreadyComplete forever:${foreverExecutionObservers.size}, lifecycle:${lifecycleExecutionObservers.size}")
+        foreverExecutionObservers.forEach { executionObserver ->
+            executionObserver.onSurveyAlreadyComplete()
+            removeExecutionObserver(executionObserver)
+        }
+
+        lifecycleExecutionObservers.forEach { entry ->
+            if (entry.key.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                entry.value.onSurveyAlreadyComplete()
+                removeExecutionObservers(entry.key)
+            }
+        }
+    }
+
     internal fun addExecutionObserver(observerExecutionObserver: ExecutionObserver?, lifecycleOwner: LifecycleOwner? = null) {
 
         observerExecutionObserver?.let { observer ->
@@ -259,6 +274,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
 
         // Until we add a trigger max_activation" count
         if (getResponse().isComplete) {
+            notifySurveyAlreadyCompleteObservers()
             Log.d("Skipping trigger ($id already answered)")
             return null
         }
@@ -373,6 +389,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
     interface ExecutionObserver {
         fun onPageChange(newPage: Int, oldPage: Int)
         fun onSurveyComplete()
+        fun onSurveyAlreadyComplete()
     }
 
     interface StateChangeObserver {
