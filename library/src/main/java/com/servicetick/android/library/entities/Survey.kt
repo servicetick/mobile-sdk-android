@@ -120,6 +120,10 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
+    fun getAllTriggers(): List<Trigger> {
+        return triggers
+    }
+
     fun getTrigger(triggerTag: String): Trigger? {
         return triggers.firstOrNull { it.tag == triggerTag && it.active }
     }
