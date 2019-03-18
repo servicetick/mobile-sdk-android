@@ -6,6 +6,7 @@ import com.servicetick.android.library.entities.triggers.TriggerPresentation
 
 open class TriggerBuilder {
 
+    @JvmSynthetic
     internal open fun build(): Trigger {
         return ManualTrigger(TriggerPresentation.START_ACTIVITY)
     }

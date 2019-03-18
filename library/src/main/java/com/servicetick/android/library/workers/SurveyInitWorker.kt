@@ -29,7 +29,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
         if (id != 0L) {
 
             val databaseSurvey = serviceTickDao.getSurvey(id)
-            if (databaseSurvey == null || databaseSurvey.isRefreshDue || serviceTick.getForceRefresh()) {
+            if (databaseSurvey == null || databaseSurvey.isRefreshDue() || serviceTick.getForceRefresh()) {
 
                 when {
                     databaseSurvey == null -> Log.d("Refreshing survey: $id Reason: not-in-db")
@@ -68,7 +68,7 @@ internal class SurveyInitWorker(context: Context, params: WorkerParameters) : Wo
 
             // Refresh all surveys
             serviceTickDao.getSurveys().forEach { databaseSurvey ->
-                if (serviceTick.getForceRefresh() || databaseSurvey.isRefreshDue) {
+                if (serviceTick.getForceRefresh() || databaseSurvey.isRefreshDue()) {
 
                     when {
                         serviceTick.getForceRefresh() -> Log.d("Refreshing survey: ${databaseSurvey.id} Reason: force")

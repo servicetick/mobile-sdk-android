@@ -29,6 +29,7 @@ class SurveyBuilder(surveyId: Long) {
 
     companion object {
 
+        @JvmStatic
         fun create(surveyId: Long): SurveyBuilder {
             return SurveyBuilder(surveyId)
         }

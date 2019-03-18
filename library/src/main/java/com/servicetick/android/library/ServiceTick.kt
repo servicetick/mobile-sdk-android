@@ -23,16 +23,26 @@ import java.lang.ref.WeakReference
 
 class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
 
+    @JvmField
+    @JvmSynthetic
     internal var weakReference = WeakReference<Context>(context.applicationContext)
     private var lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
+    @JvmField
+    @JvmSynthetic
     internal val surveyMap: MutableMap<Long, Survey> = mutableMapOf()
     private val config: MutableMap<String, Any> = mutableMapOf(
             "base_url" to "https://api.servicetick.com/v1/",
             "force_refresh" to false,
             "debug" to false
     )
+    @JvmField
+    @JvmSynthetic
     internal var clientAccountId: Long? = null
+    @JvmField
+    @JvmSynthetic
     internal var surveyAccessKey: String? = null
+    @JvmField
+    @JvmSynthetic
     internal var importerAccessKey: String? = null
     private val serviceTickDao: ServiceTickDao by inject()
     private val statistics = TriggerHelper(object : TriggerHelper.TriggerHelperCallback {
@@ -75,6 +85,7 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
         })
     }
 
+    @JvmOverloads
     fun addSurvey(surveyBuilder: SurveyBuilder, observer: Survey.StateChangeObserver? = null, lifecycleOwner: LifecycleOwner? = null) {
 
         val survey = surveyBuilder.build()
@@ -133,6 +144,7 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
     /**
      * Get a survey based on state (null = any state)
      */
+    @JvmSynthetic
     internal fun getSurveyByState(id: Long, state: Survey.State? = null): Survey? {
         return state?.let { surveyState ->
             surveyMap.filter { it.value.state == surveyState }[id]
@@ -152,10 +164,12 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
         actionConfig(configPair)
     }
 
+    @JvmSynthetic
     internal fun getBaseUrl(): String {
         return config["base_url"] as String
     }
 
+    @JvmSynthetic
     internal fun getForceRefresh(): Boolean {
         return config["force_refresh"] as Boolean
     }
@@ -174,6 +188,7 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
         }
     }
 
+    @JvmSynthetic
     internal fun getDebug(): Boolean = config["debug"] as Boolean
 
     companion object {
@@ -181,31 +196,37 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
         @Volatile
         internal var singleton: ServiceTick? = null
 
+        @JvmStatic
         fun setClientAccountId(clientAccountId: Long): ServiceTick.Companion {
             singleton().clientAccountId = clientAccountId
             return this
         }
 
+        @JvmStatic
         fun setSurveyAccessKey(surveyAccessKey: String): ServiceTick.Companion {
             singleton().surveyAccessKey = surveyAccessKey
             return this
         }
 
+        @JvmStatic
         fun setImporterAccessKey(importerAccessKey: String): ServiceTick.Companion {
             singleton().importerAccessKey = importerAccessKey
             return this
         }
 
+        @JvmStatic
         fun setConfig(config: Pair<String, Any>): ServiceTick.Companion {
             singleton().setConfig(config)
             return this
         }
 
+        @JvmStatic
         fun setConfig(key: String, value: Any): ServiceTick.Companion {
             setConfig(Pair(key, value))
             return this
         }
 
+        @JvmStatic
         fun build(): ServiceTick = singleton()
 
         private fun singleton(): ServiceTick {
@@ -216,6 +237,7 @@ class ServiceTick(context: Context) : LifecycleOwner, KoinComponent {
             }
         }
 
+        @JvmStatic
         fun get(): ServiceTick {
             return singleton()
         }

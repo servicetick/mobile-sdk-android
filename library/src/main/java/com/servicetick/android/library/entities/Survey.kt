@@ -36,16 +36,6 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         set(value) {
             field = if (value >= MINIMUM_REFRESH_INTERVAL) value else MINIMUM_REFRESH_INTERVAL
         }
-    @Ignore
-    internal var isRefreshDue: Boolean = false
-        get() {
-            lastUpdated?.let {
-                val now = Calendar.getInstance()
-                it.timeInMillis += refreshInterval
-                return now.after(it) || state == State.ENQUEUED
-            }
-            return true
-        }
 
     @PublishedApi
     internal var state = Survey.State.ENQUEUED
@@ -87,12 +77,20 @@ class Survey internal constructor(val id: Long) : KoinComponent {
     }
 
     @Transient
+    @JvmField
+    @JvmSynthetic
     internal var foreverExecutionObservers: MutableList<ExecutionObserver> = mutableListOf()
     @Transient
+    @JvmField
+    @JvmSynthetic
     internal var lifecycleExecutionObservers: HashMap<LifecycleOwner, ExecutionObserver> = hashMapOf()
     @Transient
+    @JvmField
+    @JvmSynthetic
     internal var foreverStateChangeObservers: MutableList<Survey.StateChangeObserver> = mutableListOf()
     @Transient
+    @JvmField
+    @JvmSynthetic
     internal var lifecycleStateChangeObservers: HashMap<LifecycleOwner, Survey.StateChangeObserver> = hashMapOf()
 
 
@@ -113,6 +111,17 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
+    @JvmSynthetic
+    internal fun isRefreshDue(): Boolean {
+        lastUpdated?.let {
+            val now = Calendar.getInstance()
+            it.timeInMillis += refreshInterval
+            return now.after(it) || state == State.ENQUEUED
+        }
+        return true
+    }
+
+    @JvmSynthetic
     internal fun addTrigger(trigger: Trigger) {
         if (triggers.none { it.tag == trigger.tag }) {
             trigger.surveyId = id
@@ -128,6 +137,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         return triggers.firstOrNull { it.tag == triggerTag && it.active }
     }
 
+    @JvmSynthetic
     internal fun addStateChangeObserver(stateChangeObserver: Survey.StateChangeObserver?, lifecycleOwner: LifecycleOwner? = null) {
         stateChangeObserver?.let { observer ->
 
@@ -177,6 +187,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         foreverStateChangeObservers.remove(observer)
     }
 
+    @JvmSynthetic
     internal fun notifyPageChangeObservers(newPage: Int, oldPage: Int) {
         Log.d("ExecutionObserver: Notifying onPageChange forever:${foreverExecutionObservers.size}, lifecycle:${lifecycleExecutionObservers.size}")
         foreverExecutionObservers.forEach { observer ->
@@ -190,6 +201,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
+    @JvmSynthetic
     internal fun observeExecution(lifecycleOwner: LifecycleOwner, observer: ExecutionObserver) {
 
         if (lifecycleOwner.lifecycle.currentState === Lifecycle.State.DESTROYED) {
@@ -198,6 +210,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         addExecutionObserver(observer, lifecycleOwner)
     }
 
+    @JvmSynthetic
     internal fun observeExecutionForever(observer: ExecutionObserver) {
         addExecutionObserver(observer)
     }
@@ -214,6 +227,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         observer.onSurveyStateChange(state, if (state != State.ENQUEUED) this else null)
     }
 
+    @JvmSynthetic
     internal fun notifyStateChangeObservers() {
         Log.d("StateChangeObserver: Notifying onSurveyStateChange forever:${foreverStateChangeObservers.size}, lifecycle:${lifecycleStateChangeObservers.size}")
         foreverStateChangeObservers.forEach { observer ->
@@ -257,6 +271,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
+    @JvmSynthetic
     internal fun addExecutionObserver(observerExecutionObserver: ExecutionObserver?, lifecycleOwner: LifecycleOwner? = null) {
 
         observerExecutionObserver?.let { observer ->
@@ -274,6 +289,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
+    @JvmSynthetic
     internal fun startTrigger(trigger: Trigger): Fragment? {
 
         // Until we add a trigger max_activation" count
@@ -299,13 +315,16 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
+    @JvmSynthetic
     internal fun getPageCount(): Int = renderablePages.size
 
+    @JvmSynthetic
     internal fun complete() {
         getResponse().complete()
         notifySurveyCompleteObservers()
     }
 
+    @JvmOverloads
     fun start(presentation: TriggerPresentation = TriggerPresentation.START_ACTIVITY, observer: ExecutionObserver? = null, lifecycleOwner: LifecycleOwner? = null): Fragment? {
         addExecutionObserver(observer, lifecycleOwner)
         return startTrigger(ManualTrigger(presentation))
@@ -315,6 +334,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         return "Survey(id=$id, title=$title, type=$type, state=$state, lastUpdated=${lastUpdated?.time.toString()}, refreshInterval=$refreshInterval)\n   pageTransitions=$pageTransitions\n   questionOptionActions=$questionOptionActions\n   questions=$questions\n   triggers=$triggers\n"
     }
 
+    @JvmSynthetic
     internal fun injectResponseAnswers() {
 
         if (!isAnswerInjectionComplete) {
@@ -334,6 +354,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
+    @JvmSynthetic
     internal fun getResponse(): SurveyResponse {
         return if (response.isNotEmpty()) {
             response.last()
@@ -345,6 +366,7 @@ class Survey internal constructor(val id: Long) : KoinComponent {
         }
     }
 
+    @JvmSynthetic
     internal fun convertTriggerClasses() {
         triggers.forEachIndexed { index, trigger ->
             if (trigger.javaClass.kotlin == Trigger::class) {

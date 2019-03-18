@@ -11,26 +11,31 @@ class ApplicationRunCountTriggerBuilder {
         private var presentation: TriggerPresentation = TriggerPresentation.START_ACTIVITY
         private var active = true
 
+        @JvmStatic
         fun setTag(tag: String): Companion {
             this.tag = tag
             return this
         }
 
+        @JvmStatic
         fun setPresentation(presentation: TriggerPresentation): Companion {
             this.presentation = presentation
             return this
         }
 
+        @JvmStatic
         fun setRunCount(runCount: Int): Companion {
             this.runCount = runCount
             return this
         }
 
+        @JvmStatic
         fun setActive(active: Boolean): Companion {
             this.active = active
             return this
         }
 
+        @JvmSynthetic
         override fun build(): ApplicationRunCountTrigger {
 
             tag?.let { triggerTag ->

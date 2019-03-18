@@ -100,6 +100,7 @@ open class Trigger internal constructor(@PublishedApi internal val presentation:
         }
     }
 
+    @JvmOverloads
     fun launchSurvey(observer: Survey.ExecutionObserver? = null, lifecycleOwner: LifecycleOwner? = null): Fragment? {
         survey?.run {
             addExecutionObserver(observer, lifecycleOwner)
