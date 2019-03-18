@@ -4,7 +4,7 @@
 
 It is best to add the survey as early into the Application lifecycle as possible, this gives the SDK a chance to download / update the Survey. It is recommended to do this in `onCreate` of `Application` and the simplest form is below:
 
-```Kotlin
+```kotlin
 class MyApp : Application() {
 
   override fun onCreate() {
@@ -24,7 +24,7 @@ When a survey is added to the SDK it is enqueued for download/update, once this 
 
 The following registers an observer for the given `survey_id` this can be done in `Activity`/`Fragment`
 
-```Kotlin
+```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -65,7 +65,7 @@ You can manually trigger your survey from either an `Activity` or `Fragment`, th
 
 ### Starting a new Activity
 
-```Kotlin
+```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -76,7 +76,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 ### Starting via a Fragment
 
-```Kotlin
+```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -91,7 +91,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 You can register an observer with the `start` method (as above) or the `launchSurvey` method of trigger (covered later). The observer has 3 methods, `onPageChange`, `onSurveyComplete` and `onSurveyAlreadyComplete`
 
-```Kotlin
+```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 

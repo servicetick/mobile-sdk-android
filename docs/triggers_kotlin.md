@@ -4,7 +4,7 @@
 
 Triggers are created using one of two Builders `ApplicationRunCountTriggerBuilder` / `ApplicationRunCountTriggerBuilder`
 
-```Kotlin
+```kotlin
 class MyApp : Application() {
 
   override fun onCreate() {
@@ -23,7 +23,7 @@ class MyApp : Application() {
 }
 ```
 
-The above creates two triggers, one which fires once the application is run 10 times and the second which fires once the app has been running 10minutes. Each trigger must be given a unique tag which is used to get the trigger at a later date. Once the trigger conditions are met the trigger observers will be called. From the observer you can then launch the survey however if you don't launch the survey observers will be called until you do. This allows you add extra logic before launching surveys. Once the survey is launched from the trigger it is marked as as "fired" and will no longer call the observers.
+The above creates two triggers, one which fires once the application is run 10 times and the second which fires once the app has been running atleast 10minutes. Each trigger must be given a unique tag which is used to get the trigger at a later stage. Once the Trigger conditions are met the Trigger observers will be called. From the observer you can then launch the survey however if you don't launch the survey the observers will be called until you do. This allows you add extra logic before launching surveys. Once the survey is launched from the Trigger it is marked as as "fired" and will no longer call the observers.
 
 _Note: The run time Trigger will fire next time the app is run after the number of seconds has been surpassed._
 
@@ -31,7 +31,7 @@ _Note: The run time Trigger will fire next time the app is run after the number 
 
 Triggers are then added to the `SurveyBuilder` when the Survey is added
 
-```Kotlin
+```kotlin
 class MyApp : Application() {
 
   override fun onCreate() {
@@ -53,7 +53,7 @@ class MyApp : Application() {
 
 Once you have your initialised survey in `Activity` or `Fragment` you can observe for Trigger fires
 
-```Kotlin
+```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
