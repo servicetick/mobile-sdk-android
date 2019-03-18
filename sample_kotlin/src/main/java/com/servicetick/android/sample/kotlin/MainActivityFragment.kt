@@ -1,6 +1,5 @@
 package com.servicetick.android.sample.kotlin
 
-
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.LayoutInflater
@@ -16,7 +15,6 @@ import com.servicetick.android.library.entities.triggers.Trigger
 import com.servicetick.android.library.entities.triggers.TriggerPresentation
 import kotlinx.android.synthetic.main.fragment_main.*
 
-
 class MainActivityFragment : Fragment() {
 
     private var survey: Survey? = null
@@ -27,9 +25,8 @@ class MainActivityFragment : Fragment() {
         triggersOn = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean(SampleKotlinApp.PREF_TRIGGERS_ON, false)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.fragment_main, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,7 +34,6 @@ class MainActivityFragment : Fragment() {
         val stateChangeObserver = object : Survey.StateChangeObserver {
             override fun onSurveyStateChange(surveyState: Survey.State, survey: Survey?) {
 
-                lilhermit.android.remotelogger.library.Log.v("survey state: $surveyState")
                 if (surveyState == Survey.State.INITIALISED) {
 
 
@@ -107,9 +103,7 @@ class MainActivityFragment : Fragment() {
      * Survey.getTrigger(String) only returns active triggers, generally SDK devs will not have to change trigger
      * states at runtime
      */
-    private fun getTriggerWrapper(tag: String): Trigger? {
-        return survey?.getAllTriggers()?.firstOrNull { tag == it.tag }
-    }
+    private fun getTriggerWrapper(tag: String): Trigger? = survey?.getAllTriggers()?.firstOrNull { tag == it.tag }
 
     private fun toggleTriggerState() {
         triggersOn = !triggersOn
