@@ -12,10 +12,11 @@ class SampleKotlinApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        ServiceTick
+        val serviceTick = ServiceTick
                 .setClientAccountId(CLIENT_ACCOUNT_ID)
                 .setSurveyAccessKey(SURVEY_ACCESS_KEY)
                 .setImporterAccessKey(IMPORTER_ACCESS_KEY)
+                .build()
 
         val triggersOn = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_TRIGGERS_ON, false)
 
@@ -24,7 +25,7 @@ class SampleKotlinApp : Application() {
                 .addTrigger(ApplicationRunCountTriggerBuilder.setTag(TRIGGER_APP_RUN_COUNT).setRunCount(TRIGGER_APP_RUN_COUNT_VAL).setActive(triggersOn))
                 .addTrigger(ApplicationRunTimeTriggerBuilder.setTag(TRIGGER_APP_RUN_TIME).setRunTime(TRIGGER_APP_RUN_TIME_VAL).setActive(triggersOn))
 
-        ServiceTick.get().addSurvey(surveyBuilder)
+        serviceTick.addSurvey(surveyBuilder)
     }
 
     companion object {

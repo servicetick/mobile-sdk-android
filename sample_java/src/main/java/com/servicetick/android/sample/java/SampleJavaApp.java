@@ -25,10 +25,11 @@ public class SampleJavaApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ServiceTick
+        ServiceTick serviceTick = ServiceTick
                 .setImporterAccessKey(IMPORTER_ACCESS_KEY)
                 .setSurveyAccessKey(SURVEY_ACCESS_KEY)
-                .setClientAccountId(CLIENT_ACCOUNT_ID);
+                .setClientAccountId(CLIENT_ACCOUNT_ID)
+                .build();
 
         Boolean triggersOn = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_TRIGGERS_ON, false);
 
@@ -37,6 +38,6 @@ public class SampleJavaApp extends Application {
                 .addTrigger(ApplicationRunCountTriggerBuilder.setTag(TRIGGER_APP_RUN_COUNT).setRunCount(TRIGGER_APP_RUN_COUNT_VAL).setActive(triggersOn))
                 .addTrigger(ApplicationRunTimeTriggerBuilder.setTag(TRIGGER_APP_RUN_TIME).setRunTime(TRIGGER_APP_RUN_TIME_VAL).setActive(triggersOn));
 
-        ServiceTick.get().addSurvey(surveyBuilder);
+        serviceTick.addSurvey(surveyBuilder);
     }
 }
