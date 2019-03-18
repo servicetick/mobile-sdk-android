@@ -44,14 +44,14 @@ class MainActivityFragment : Fragment() {
                         getTriggerWrapper(SampleKotlinApp.TRIGGER_APP_RUN_COUNT)?.observe(this@MainActivityFragment) {
                             app_run_count_trigger.setText(R.string.trigger_app_run_count_triggered)
 
-                            // You can launcher your survey from here by calling Trigger.launchSurvey() which
+                            // You can launch your survey from here by calling Trigger.launchSurvey() with an optional
                             // Survey.ExecutionObserver and lifecycle owner
                         }
 
                         getTriggerWrapper(SampleKotlinApp.TRIGGER_APP_RUN_TIME)?.observe(this@MainActivityFragment) {
                             app_run_time_trigger.setText(R.string.trigger_app_run_time_triggered)
 
-                            // You can launcher your survey from here by calling Trigger.launchSurvey() which
+                            // You can launch your survey from here by calling Trigger.launchSurvey() with an optional
                             // Survey.ExecutionObserver and lifecycle owner
                         }
                     }

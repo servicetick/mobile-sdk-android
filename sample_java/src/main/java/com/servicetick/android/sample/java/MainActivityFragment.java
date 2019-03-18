@@ -75,7 +75,7 @@ public class MainActivityFragment extends Fragment {
                                     appRunCountTriggerTextView.setText(R.string.trigger_app_run_count_triggered);
                                 }
 
-                                // You can launcher your survey from here by calling Trigger.launchSurvey() which
+                                // You can launch your survey from here by calling Trigger.launchSurvey() with an optional
                                 // Survey.ExecutionObserver and lifecycle owner
                             }
                         });
@@ -88,8 +88,9 @@ public class MainActivityFragment extends Fragment {
                             public void triggerFired(@NotNull Trigger trigger) {
                                 appRunTimeTriggerTextView.setText(R.string.trigger_app_run_time_triggered);
 
-                                // You can launcher your survey from here by calling Trigger.launchSurvey() which
+                                // You can launch your survey from here by calling Trigger.launchSurvey() with an optional
                                 // Survey.ExecutionObserver and lifecycle owner
+
                             }
                         });
                     }
