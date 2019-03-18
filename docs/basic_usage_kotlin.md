@@ -1,26 +1,28 @@
-# Usage - Kotlin
+# Basic usage - Kotlin
 
 ## Adding a survey
 
 It is best to add the survey as early into the Application lifecycle as possible, this gives the SDK a chance to download / update the Survey. It is recommended to do this in `onCreate` of `Application` and the simplest form is below:
 
 ```Kotlin
-override fun onCreate() {
-    super.onCreate()
+class MyApp : Application() {
 
-    ...
+  override fun onCreate() {
+      super.onCreate()
 
-    val surveyBuilder = SurveyBuilder.create({SURVEY_ID_HERE})
-    serviceTick.addSurvey(surveyBuilder)
+      ...
+
+      val surveyBuilder = SurveyBuilder.create({SURVEY_ID_HERE})
+      serviceTick.addSurvey(surveyBuilder)
+  }
 }
-
 ```
 
 ## Getting your initialised survey via `Survey.StateChangeObserver`
 
-When a survey is added to the SDK it is enqueued for download/update, once this is complete a survey is then initialised or disabled (it is disabled via the ServiceTick Console)
+When a survey is added to the SDK it is enqueued for download/update, once this is complete a survey is then initialised or disabled (if it is disabled via the ServiceTick Console)
 
-The following registers an observer for the given survey id
+The following registers an observer for the given `survey_id` this can be done in `Activity`/`Fragment`
 
 ```Kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +61,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 ```
 
 ## Manually triggering a survey
-You can manually trigger your survey from either an Activity or fragment, the only parameter required is how you want the survey "presenting". This tells the SDK to start an new activity or return a fragment for you to add to your `FragmentManager`
+You can manually trigger your survey from either an `Activity` or `Fragment`, the only parameter required is how you want the survey "presenting". This tells the SDK to start an new activity or return a `Fragment` for you to add to your `FragmentManager`
 
 ### Starting a new Activity
 
@@ -85,7 +87,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-### Observing a Survey whilst it's being performed with `Survey.ExecutionObserver`
+## Observing a Survey whilst it's being completed with `Survey.ExecutionObserver`
 
 You can register an observer with the `start` method (as above) or the `launchSurvey` method of trigger (covered later). The observer has 3 methods, `onPageChange`, `onSurveyComplete` and `onSurveyAlreadyComplete`
 
@@ -113,6 +115,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
      survey?.start(TriggerPresentation.FRAGMENT, manualSurveyFragmentObserver, requireActivity())?.let { fragment ->
          requireFragmentManager().beginTransaction().replace(R.id.content, fragment, "survey_fragment").addToBackStack("survey").commit()
      }
-
 }
 ```
+
+_Note: The 3rd parameter of `start` is a LifecycleOwner (`Activity`/`Fragment`) which if null will observe the Survey forever. See here for more information on [Android Lifecycle](https://developer.android.com/topic/libraries/architecture/lifecycle)_

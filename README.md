@@ -8,6 +8,6 @@
   - Survey Access key
   - Importer access key
 - [Installation](docs/installation.md)
-- Configuration [Java](docs/configuration_java.md) | [Kotlin](docs/configuration_kotlin.md)
-- Basic usage [Java](docs/basic_usage_java.md) | [Kotlin](docs/basic_usage_kotlin.md)
-- Triggers
+- Configuration [Kotlin](docs/configuration_kotlin.md) | [Java](docs/configuration_java.md)
+- Basic usage [Kotlin](docs/basic_usage_kotlin.md) | [Java](docs/basic_usage_java.md)
+- Triggers [Kotlin](docs/triggers_kotlin.md) | [Java](docs/triggers_java.md)
