@@ -10,7 +10,7 @@ The ServiceTick Mobile SDK allows you to add ServiceTick surveys to your Android
 
 * Adding multiple surveys with multiple pages / questions to your app
 * Surveys are downloaded and updated periodically
-* Responses are submitting to ServiceTick Importer when a Internet connection is available or queued until such time
+* Responses are submitting to ServiceTick Importer when an Internet connection is available or queued until such time
 * Launching the surveys in a new Activity or Fragment
 * Receiving callbacks from the Survey as the users completes them
   * Page changing
@@ -20,7 +20,7 @@ The ServiceTick Mobile SDK allows you to add ServiceTick surveys to your Android
 * Adding Triggers
   * Application Run Count Trigger
   * Application Run Time Trigger
-* Observing Triggers for when the fire
+* Observing Triggers for when they fire
   * Launching the survey from a fired trigger
 
 ## Documentation
