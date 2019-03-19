@@ -12,7 +12,7 @@ allprojects {
 Add the dependency to your module build.gradle.
 ```groovy
 dependencies {
-  implementation 'com.gitlab.servicetick.mobilesdk-android:module_name_here:${latest.version}'
+  implementation 'com.gitlab.servicetick:mobile-sdk-android:${latest.version}'
 }
 ```
 
