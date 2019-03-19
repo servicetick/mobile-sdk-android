@@ -16,6 +16,6 @@ dependencies {
 }
 ```
 
-${latest.version} = [![Release](https://jitpack.io/v/com.gitlab.servicetick/module_name.svg?label=Latest%20version)](https://jitpack.io/#com.gitlab.servicetick/module_name)
+${latest.version} = [![Release](https://jitpack.io/v/com.gitlab.servicetick/mobile-sdk-android.svg?label=Latest%20version)](https://jitpack.io/#com.gitlab.servicetick/mobile-sdk-android)
 
 Now resynchronise your project.

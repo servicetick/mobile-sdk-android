@@ -48,9 +48,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-## Getting your survey via get()
+## Getting your survey via getSurvey()
 
-The observer method is the best way to obtain a copy of your survey however you can use the `get()` method. This method is however discouraged as your survey might not yet be initialised and will return `null`.
+The observer method is the best way to obtain a copy of your survey however you can use the `getSurvey()` method. This method is however discouraged as your survey might not yet be initialised and will return `null`.
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {

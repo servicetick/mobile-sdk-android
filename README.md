@@ -1,4 +1,4 @@
-[![Release](https://jitpack.io/v/com.gitlab.servicetick/mobilesdk.svg)](https://jitpack.io/#com.gitlab.servicetick/mobilesdk)
+[![Release](https://jitpack.io/v/com.gitlab.servicetick/mobile-sdk-android.svg)](https://jitpack.io/#com.gitlab.servicetick/mobile-sdk-android)
 
 # ServiceTick Mobile SDK for Android
 
