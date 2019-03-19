@@ -1,4 +1,4 @@
-[![Release](https://jitpack.io/v/com.github.servicetick/mobile-sdk-android.svg)](https://jitpack.io/#com.github.servicetick/mobile-sdk-android)
+[![Release](https://jitpack.io/v/com.gitlab.servicetick/mobile-sdk-android.svg)](https://jitpack.io/#com.gitlab.servicetick/mobile-sdk-android)
 [![License](https://img.shields.io/badge/license-APACHE2-green.svg)](LICENSE)
 
 
